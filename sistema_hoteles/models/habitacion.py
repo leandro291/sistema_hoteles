@@ -1,3 +1,4 @@
+from typing import List
 from pydantic import BaseModel
 
 class HabitacionSchema(BaseModel):
@@ -7,9 +8,11 @@ class HabitacionSchema(BaseModel):
 
 
 class Habitacion:
-    def __init__(self, id_habitacion: int | None, numero_piso: int, numero_habitacion: int, estado: str, tipo_habitacion: int):
+    def __init__(self, numero_piso: int, numero_habitacion: int, estado: str, id_tipo_habitacion: int, id_habitacion: int | None = None):
         self.id_habitacion = id_habitacion
+        self.tipo_habitacion = id_tipo_habitacion
+        self.estado = estado
         self.numero_piso = numero_piso
         self.numero_habitacion = numero_habitacion
-        self.estado = estado
-        self.tipo_habitacion = tipo_habitacion
+
+        self.reservas_habitacion: List[int] = []
