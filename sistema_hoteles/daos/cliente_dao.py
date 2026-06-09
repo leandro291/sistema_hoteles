@@ -1,41 +1,27 @@
-from config.database import ConexionDB
+from daos.base_dao import BaseDAO
 from models.cliente import Cliente
 
-class ClienteDAO:
-    def __init__(self):
-        self.db = ConexionDB()
-        self.conexion = self.db.obtener_conexion()
+class ClienteDAO(BaseDAO):
 
-    def insertar_cliente(self, cliente: "Cliente"):
+    def insertar_cliente(self, cliente: "Cliente") -> int:
 
-        cursor = self.conexion.cursor()
+        sql = """
+            INSERT INTO cliente (nombre, apellido, dni, telefono, correo, direccion)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING idcliente;
+        """
 
-        try:
+        valores = (
+            cliente.nombre,
+            cliente.apellido,
+            cliente.dni,
+            cliente.telefono,
+            cliente.correo,
+            cliente.direccion
+        )
 
-            sql = """
-                INSERT INTO cliente (nombre, apellido, dni, telefono, correo, direccion)
-                VALUES (%s, %s, %s, %s, %s, %s)
-                RETURNING idcliente;
-            """
+        return self.insertar_y_retornar_id(sql, valores)
 
-            valores = (
-                cliente.nombre,
-                cliente.apellido,
-                cliente.dni,
-                cliente.telefono,
-                cliente.correo,
-                cliente.direccion
-            )
 
-            cursor.execute(sql, valores)
-            id_generado = cursor.fetchone()[0]
-            self.conexion.commit()
 
-            return id_generado
 
-        except Exception as e:
-            self.conexion.rollback()
-            raise e
-        finally:
-            if cursor:
-                cursor.close()
