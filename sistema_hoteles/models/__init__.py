@@ -3,7 +3,7 @@ from .usuario import Usuario, UsuarioSchema
 from .cliente import Cliente, ClienteSchema
 from .reserva import Reserva, ReservaSchema
 from .servicio import Servicio, ServicioSchema
-from .reserva_habitacion import reserva_habitacion
+from .reserva_habitacion import ReservaHabitacion
 from .habitacion import Habitacion, HabitacionSchema
 from .acompanante import Acompanante, AcompananteSchema
 from .tipo_habitacion import TipoHabitacion, TipoHabitacionSchema
