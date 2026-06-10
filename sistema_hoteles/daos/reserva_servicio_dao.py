@@ -18,3 +18,26 @@ class ReservaServicioDAO(BaseDAO):
         )
 
         return self.insertar_sin_retorno_id(consulta, valores)
+    
+    def eliminar_reserva_servicio(self, id_servicio: int, id_reserva: int):
+
+        cursor = self.conexion.cursor()
+        
+        consulta = """
+            DELETE FROM reserva_servicio 
+            WHERE idservicio = %s AND idreserva = %s
+        """
+
+        valores = (id_servicio, id_reserva)
+
+        try:
+
+            cursor.execute(consulta, valores)
+            
+            if cursor.rowcount == 0:
+                raise Exception("No se encontró el registro para eliminar")
+
+        except Exception as e:
+            raise e
+        finally:
+            cursor.close()
