@@ -20,6 +20,16 @@ class HabitacionDAO(BaseDAO):
 
         return self.insertar_y_retornar_id(consulta, valores)
     
+    def cambiar_estado_habitacion(self, id_habitacion: int, nuevo_estado: str) -> bool:
+        
+        consulta = """
+            UPDATE habitacion SET estado = %s WHERE idhabitacion = %s
+        """
+
+        valores = (nuevo_estado, id_habitacion)
+
+        self.cambiar_estado(consulta, valores)
+        
     def obtener_precio_por_habitacion(self, id_habitacion: int):
 
         consulta = """
