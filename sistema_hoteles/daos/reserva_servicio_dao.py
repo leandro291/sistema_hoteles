@@ -33,7 +33,7 @@ class ReservaServicioDAO(BaseDAO):
         try:
 
             cursor.execute(consulta, valores)
-            
+
             if cursor.rowcount == 0:
                 raise Exception("No se encontró el registro para eliminar")
 
@@ -41,3 +41,30 @@ class ReservaServicioDAO(BaseDAO):
             raise e
         finally:
             cursor.close()
+
+    def obtener_total_consumo(self, id_reserva: int) -> float:
+
+        cursor = self.conexion.cursor()
+        
+        consulta = """
+            SELECT COALESCE(SUM(subtotal), 0) 
+            FROM reserva_servicio 
+            WHERE id_reserva = %s;
+        """
+
+        valores = (id_reserva, )
+
+        try:
+
+            cursor.execute(consulta, valores)
+            resultado = cursor.fetchone()
+
+            if not resultado:
+                raise Exception("No se ha eonctrado valor para el ID ingresado")
+            
+            return float(resultado[0])
+
+        except Exception as e:
+            raise e
+        finally:
+            cursor.close()    
