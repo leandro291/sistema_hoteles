@@ -36,6 +36,7 @@ class RecepcionController:
             dao_habitacion = HabitacionDAO(conexion)
             precio_por_noche = dao_habitacion.obtener_precio_por_habitacion(id_habitacion)
             reserva.total = noches_totales * precio_por_noche
+            reserva.estado_reserva = "En curso"
 
             # Registro de clientes
             dao_cliente = ClienteDAO(conexion)
