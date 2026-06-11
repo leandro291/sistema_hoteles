@@ -6,9 +6,9 @@ class HabitacionDAO(BaseDAO):
     def insertar_habitacion(self, habitacion: "Habitacion") -> int:
 
         consulta = """
-            INSERT INTO habitacion (num_piso, num_habitacion, estado, idtipo_habitacion)
+            INSERT INTO habitacion (num_piso, num_habitacion, estado, id_tipo_habitacion)
             VALUES (%s, %s, %s, %s)
-            RETURNING idhabitacion
+            RETURNING id_habitacion
         """
 
         valores = (
@@ -18,7 +18,7 @@ class HabitacionDAO(BaseDAO):
             habitacion.id_tipo_habitacion
         )
 
-        return self.insertar_y_retornar_id(consulta, valores)
+        return self.insertar_datos(consulta, valores)
     
     def cambiar_estado_habitacion(self, id_habitacion: int, nuevo_estado: str) -> bool:
         
@@ -30,29 +30,28 @@ class HabitacionDAO(BaseDAO):
 
         self.cambiar_estado(consulta, valores)
         
-    def obtener_precio_por_habitacion(self, id_habitacion: int):
+    def obtener_precio_por_habitacion(self, id_habitacion: int) -> float:
 
         consulta = """
             SELECT th.precio
             FROM habitacion h
-            JOIN tipo_habitacion th ON h.idhabitacion = th.idhabitacion
+            JOIN tipo_habitacion th ON h.id_habitacion = th.id_habitacion
             WHERE h.idhabitacion = %s
         """
 
         valores = (id_habitacion,)
 
-        cursor = self.conexion.cursor()
+        return float(self.obtener_dato_por_id(consulta, valores))
+    
+    def obtener_cantidad_por_habitacion(self, id_habitacion: int) -> int:
 
-        try:
-            cursor.execute(consulta, valores)
-            resultado = cursor.fetchone()    
+        consulta = """
+            SELECT th.cantidad
+            FROM habitacion h
+            JOIN tipo_habitacion th ON h.id_habitacion = th.id_habitacion
+            WHERE h.idhabitacion = %s
+        """
 
-            if resultado is None:
-                raise Exception("La habitacion no existe o no tiene un tipo asignado")
-            
-            return float(resultado[0])
-        
-        except Exception as e:
-            raise e
-        finally:
-            cursor.close()
+        valores = (id_habitacion)
+
+        return int(self.obtener_dato_por_id(self,id_habitacion))
