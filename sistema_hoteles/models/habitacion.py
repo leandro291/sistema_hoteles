@@ -8,11 +8,12 @@ class HabitacionSchema(BaseModel):
 
 
 class Habitacion:
-    def __init__(self, numero_piso: int, numero_habitacion: int, estado: str, id_tipo_habitacion: int, id_habitacion: int | None = None):
+    def __init__(self, numero_piso: int, numero_habitacion: int, estado: str, id_tipo_habitacion: int, 
+                 id_habitacion: int | None = None):
         self.id_habitacion = id_habitacion
-        self.id_tipo_habitacion = id_tipo_habitacion
-        self.estado = estado
+
         self.numero_piso = numero_piso
         self.numero_habitacion = numero_habitacion
+        self.estado = estado
 
-        self.reservas_habitacion: List[int] = []
+        self.id_tipo_habitacion = id_tipo_habitacion
