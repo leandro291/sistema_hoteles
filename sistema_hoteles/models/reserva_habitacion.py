@@ -1,4 +1,19 @@
+from pydantic import BaseModel
+from decimal import Decimal
+
+class ReservaHabitacionSchema(BaseModel):
+    precio_por_noche : Decimal
+    es_titular : bool
+    subtotal: Decimal
+
 class ReservaHabitacion:
-    def __init__(self, id_habitacion: int, id_reserva: int):
+    def __init__(self, id_habitacion: int, id_reserva: int, precio_por_noche: Decimal, 
+                 es_titular: bool, subtotal: Decimal, id_reserva_habitacion: None = None):
+        self.id_reserva_habitacion = id_reserva_habitacion
+
+        self.precio_por_noche = precio_por_noche
+        self.es_titular = es_titular
+        self.subtotal = subtotal
+
         self.id_habitacion = id_habitacion
         self.id_reserva = id_reserva
