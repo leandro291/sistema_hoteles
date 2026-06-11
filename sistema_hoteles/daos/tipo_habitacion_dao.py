@@ -8,7 +8,7 @@ class TipoHabitacionDAO(BaseDAO):
         consulta = """
             INSERT INTO tipo_habitacion (nombre, precio, capacidad)
             VALUES (%s, %s, %s)
-            RETURNING idtipo_habitacion
+            RETURNING id_tipo_habitacion
         """
 
         valores = (
@@ -17,5 +17,5 @@ class TipoHabitacionDAO(BaseDAO):
             tipo_habitacion.capacidad
         )
 
-        return self.insertar_y_retornar_id(consulta, valores)
+        return self.insertar_datos(consulta, valores)
 
