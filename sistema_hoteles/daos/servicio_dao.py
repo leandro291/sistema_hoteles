@@ -8,7 +8,7 @@ class ServicioDAO(BaseDAO):
         consulta = """
             INSERT INTO servicio (nombre, descripcion, precio) 
             VALUES (%s, %s, %s)
-            RETURNING idservicio
+            RETURNING id_servicio
         """
 
         valores = (
@@ -17,7 +17,7 @@ class ServicioDAO(BaseDAO):
             servicio.precio
         )
 
-        return self.insertar_y_retornar_id(consulta, valores)
+        return self.insertar_datos(consulta, valores)
     
     def obtener_precio_por_id(self, id_servicio: int) -> int:
 
