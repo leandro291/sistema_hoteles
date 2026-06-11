@@ -6,17 +6,18 @@ class AcompananteDAO(BaseDAO):
     def insertar_acompanante(self, acompanante: "Acompanante") -> int:
 
         consulta = """
-            INSERT INTO acompanante (nombre, apellido, dni, telefono, idreserva)
-            VALUES (%s, %s, %s, %s, %s)
-            RETURNING idacompanante
+            INSERT INTO acompanante (nombre, apellido, tipo_documento, num_documento, telefono, id_reserva_habitacion)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING id_acompanante
         """
 
         valores = (
             acompanante.nombre,
             acompanante.apellido,
-            acompanante.dni,
+            acompanante.tipo_documento,
+            acompanante.numero_documento,
             acompanante.telefono,
-            acompanante.id_reserva
+            acompanante.id_reserva_habitacion
         )
 
-        return self.insertar_y_retornar_id(consulta, valores)
+        return self.insertar_datos(consulta, valores)
