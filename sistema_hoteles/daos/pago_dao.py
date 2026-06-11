@@ -6,19 +6,19 @@ class PagoDAO(BaseDAO):
     def insertar_pago(self, pago: "Pago") -> int:
 
         consulta = """
-            INSERT INTO pago (monto, fecha_pago, metodo_pago, estado_pago, tipo_comprobante, idreserva)
+            INSERT INTO pago (monto, metodo_pago, tipo_comprobante, estado_pago, id_reserva, id_usuario)
             VALUES (%s, %s, %s, %s, %s, %s)
-            RETURNING idpago
+            RETURNING id_pago
         """
 
         valores = (
             pago.monto,
-            pago.fecha_pago,
             pago.metodo_pago,
-            pago.estado_pago,
             pago.tipo_comprobante,
-            pago.id_reserva
+            pago.estado_pago,
+            pago.id_reserva,
+            pago.id_usuario
         )
 
-        return self.insertar_y_retornar_id(consulta, valores)
+        return self.insertar_datos(consulta, valores)
         
