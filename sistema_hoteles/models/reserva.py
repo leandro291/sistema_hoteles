@@ -22,9 +22,5 @@ class Reserva:
         self.estado_reserva = estado_reserva
         self.total = total
 
-        self.pagos: List[int] = []
-        self.acompanantes: List[int] = []
-        self.reserva_servicio: List[int] = []
-        self.reserva_habitacion: List[int] = []
 
         

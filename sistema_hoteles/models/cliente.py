@@ -18,5 +18,3 @@ class Cliente:
         self.telefono = telefono
         self.correo = correo
         self.direccion = direccion
-
-        self.reservas: List[int] = []

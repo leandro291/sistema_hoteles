@@ -14,7 +14,5 @@ class TipoHabitacion:
         self.precio = precio
         self.capacidad = capacidad
 
-        self.habitaciones: List[int] = []
-
 
 

@@ -14,5 +14,4 @@ class Servicio:
         self.descripcion = descripcion
         self.precio = precio
 
-        self.reserva_servicio: List[int] = []
     
