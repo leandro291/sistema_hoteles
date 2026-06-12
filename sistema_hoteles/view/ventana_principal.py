@@ -22,16 +22,42 @@ class VentanaPrincipal:
         self.div_izquierdo.pack(side=tk.LEFT, fill="both", expand=True)
         self.div_izquierdo.pack_propagate(False)
 
-        tk.Label(self.div_izquierdo, image=self.image_tk).pack(pady=(50,40))
-        tk.Label(self.div_izquierdo, text="Direccion: Av Canta Callao 123", background="#E2E2E2" ,font=("Arial", 16, "bold")).pack(pady=2)
-        tk.Label(self.div_izquierdo, text="Celular: +51 932 921 321", background="#E2E2E2" ,font=("Arial", 16, "bold")).pack(pady=2)
-        tk.Label(self.div_izquierdo, text="Email: gestion_hotel@unac.edu.pe", background="#E2E2E2" ,font=("Arial", 16, "bold")).pack(pady=2)
-        tk.Label(self.div_izquierdo, text="Callao (Bellavista) - Perú", background="#E2E2E2" ,font=("Arial", 16, "bold")).pack(pady=2)
+        #Frame izquierda -> Para manejar la informacion personal
+        tk.Label(self.div_izquierdo, image=self.image_tk).pack(pady=(80,70))
+        tk.Label(self.div_izquierdo, text="Direccion: Av Canta Callao 123", background="#E2E2E2" , font=("Arial", 16, "bold")).pack(pady=2)
+        tk.Label(self.div_izquierdo, text="Celular: +51 932 921 321", background="#E2E2E2" , font=("Arial", 16, "bold")).pack(pady=2)
+        tk.Label(self.div_izquierdo, text="Email: gestion_hotel@unac.edu.pe", background="#E2E2E2" , font=("Arial", 16, "bold")).pack(pady=2)
+        tk.Label(self.div_izquierdo, text="Callao (Bellavista) - Perú", background="#E2E2E2" , font=("Arial", 16, "bold")).pack(pady=2)
         tk.Label(self.div_izquierdo, text="Copyright © 2026 | Todos los derechos reservados ", background="#E2E2E2" ,font=("Arial", 18, "bold")).pack(pady=20)
 
+        #Frame derecho -> Para manejar el inicio de sesion y registro del usuario
         self.div_derecho = tk.Frame(self.root, background="#F3DCAB")
         self.div_derecho.pack(side=tk.RIGHT, fill="both", expand=True)
         self.div_derecho.pack_propagate(False)
+
+        #Subframe -> Para mantener el contenido alineado
+        self.formulario = tk.Frame(self.div_derecho, background="#F3DCAB")
+        self.formulario.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+
+        tk.Label(self.formulario, text="Inicio de sesion", background="#F3DCAB", font=("Arial", 40, "bold")).pack(pady=(0, 40))
+
+        tk.Label(self.formulario, text="Nombre de usuario", background="#F3DCAB", font=("Arial",25, "bold")).pack(anchor="w")
+        self.nombre_usuario = tk.Entry(self.formulario, font=("Arial", 24))
+        self.nombre_usuario.pack(ipady=3, pady=(5, 30), fill="x")
+
+        tk.Label(self.formulario, text="Contraseña", background="#F3DCAB", font=("Arial",25, "bold")).pack(anchor="w")
+        
+        self.contrasena_usuario = tk.Entry(self.formulario, font=("Arial", 24), show="*") 
+        self.contrasena_usuario.pack(ipady=3, pady=(5, 10), fill="x")
+
+        self.casilla_mostrar = tk.Checkbutton(self.formulario, text="Mostrar contraseña", background="#F3DCAB", font=("Arial", 12))
+        self.casilla_mostrar.pack(anchor="w", pady=(0, 30))
+
+        self.boton_iniciar = tk.Button(self.formulario, text="Iniciar", font=("Arial", 20, "bold"), bd=2, relief="raised")
+        self.boton_iniciar.pack(pady=10, ipady=3, fill="x")
+
+        self.boton_registrar = tk.Button(self.formulario, text="Registrar", font=("Arial", 20, "bold"), bd=2, relief="raised")
+        self.boton_registrar.pack(pady=10, ipady=3, fill="x")
 
 
 
