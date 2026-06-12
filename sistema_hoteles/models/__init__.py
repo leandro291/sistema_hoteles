@@ -7,4 +7,4 @@ from .reserva_habitacion import ReservaHabitacion
 from .habitacion import Habitacion, HabitacionSchema
 from .acompanante import Acompanante, AcompananteSchema
 from .tipo_habitacion import TipoHabitacion, TipoHabitacionSchema
-from .reserva_servicio import ReservaServicio, ReservaServicioSchema
+from .reserva_servicio import ReservaServicio
