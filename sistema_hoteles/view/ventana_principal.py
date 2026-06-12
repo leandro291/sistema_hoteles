@@ -1,6 +1,9 @@
 import os
 import tkinter as tk
+from tkinter import messagebox
 from PIL import Image, ImageTk
+
+from controllers.auth_controller import AuthController
 
 class VentanaPrincipal:
     def __init__(self, root):
@@ -36,7 +39,6 @@ class VentanaPrincipal:
         self.div_derecho.pack_propagate(False)
 
         self.login_usuario()
-
 
     def login_usuario(self):
 
@@ -83,14 +85,44 @@ class VentanaPrincipal:
         self.registro_contrasena.pack(ipady=3, pady=(5, 20), fill="x")
 
         tk.Label(self.formulario, text="Rol", background="#F3DCAB", font=("Arial",25, "bold")).pack(anchor="w")
-        self.registro_rol = tk.Entry(self.formulario, font=("Arial", 24), show="*") 
+        self.registro_rol = tk.Entry(self.formulario, font=("Arial", 24)) 
         self.registro_rol.pack(ipady=3, pady=(5, 20), fill="x")
 
-        self.boton_iniciar = tk.Button(self.formulario, text="Registrarse", font=("Arial", 20, "bold"), bd=2, relief="raised")
-        self.boton_iniciar.pack(pady=10, ipady=3, fill="x")
+        self.boton_registrarse = tk.Button(self.formulario, text="Registrarse", font=("Arial", 20, "bold"), bd=2, relief="raised", command=self.ejecutar_registro)
+        self.boton_registrarse.pack(pady=10, ipady=3, fill="x")
 
-        self.boton_registrar = tk.Button(self.formulario, text="Regresar", font=("Arial", 20, "bold"), bd=2, relief="raised", command=self.login_usuario)
-        self.boton_registrar.pack(pady=10, ipady=3, fill="x")
+        self.boton_inicio = tk.Button(self.formulario, text="Regresar", font=("Arial", 20, "bold"), bd=2, relief="raised", command=self.login_usuario)
+        self.boton_inicio.pack(pady=10, ipady=3, fill="x")
+
+    def ejecutar_registro(self):
+
+        nombre = self.registro_usuario.get()
+        contrasena = self.registro_contrasena.get()
+        rol = self.registro_rol.get()
+
+        print(nombre)
+        print(contrasena)
+        print(rol)
+
+        controlador = AuthController()
+
+        try:
+
+            controlador.registrar_nuevo_usuario(
+                nombre, 
+                contrasena, 
+                rol
+            )
+
+            messagebox.showinfo("Exito", "Usuario registrado correctamente")
+            self.login_usuario()
+
+        except ValueError as e:
+            messagebox.showerror("Datos invalidados", str(e))
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+        
+
 
 if __name__ == "__main__":
     
