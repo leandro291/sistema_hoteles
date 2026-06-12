@@ -62,7 +62,7 @@ class VentanaPrincipal:
         self.casilla_mostrar = tk.Checkbutton(self.formulario, text="Mostrar contraseña", background="#F3DCAB", font=("Arial", 12))
         self.casilla_mostrar.pack(anchor="w", pady=(0, 30))
 
-        self.boton_iniciar = tk.Button(self.formulario, text="Iniciar", font=("Arial", 20, "bold"), bd=2, relief="raised")
+        self.boton_iniciar = tk.Button(self.formulario, text="Iniciar", font=("Arial", 20, "bold"), bd=2, relief="raised", command=self.ejecutar_login)
         self.boton_iniciar.pack(pady=10, ipady=3, fill="x")
 
         self.boton_registrar = tk.Button(self.formulario, text="Registrar", font=("Arial", 20, "bold"), bd=2, relief="raised", command=self.registrar_usuario)
@@ -100,10 +100,6 @@ class VentanaPrincipal:
         contrasena = self.registro_contrasena.get()
         rol = self.registro_rol.get()
 
-        print(nombre)
-        print(contrasena)
-        print(rol)
-
         controlador = AuthController()
 
         try:
@@ -121,7 +117,21 @@ class VentanaPrincipal:
             messagebox.showerror("Datos invalidados", str(e))
         except Exception as e:
             messagebox.showerror("Error", str(e))
-        
+    
+    def ejecutar_login(self):
+
+        login_usuario = self.inicio_usuario.get()
+        login_contrasena = self.inicio_contrasena.get()
+
+        controlador = AuthController()
+
+        try:
+            datos = controlador.iniciar_sesion(login_usuario, login_contrasena)
+            return datos
+        except ValueError as e:
+            messagebox.showerror("Datos invalidados", str(e))
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
 
 
 if __name__ == "__main__":
