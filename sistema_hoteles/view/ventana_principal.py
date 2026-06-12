@@ -35,6 +35,14 @@ class VentanaPrincipal:
         self.div_derecho.pack(side=tk.RIGHT, fill="both", expand=True)
         self.div_derecho.pack_propagate(False)
 
+        self.login_usuario()
+
+
+    def login_usuario(self):
+
+        if hasattr(self, 'formulario'):
+            self.formulario.destroy()
+
         #Subframe -> Para mantener el contenido alineado
         self.formulario = tk.Frame(self.div_derecho, background="#F3DCAB")
         self.formulario.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
@@ -42,13 +50,12 @@ class VentanaPrincipal:
         tk.Label(self.formulario, text="Inicio de sesion", background="#F3DCAB", font=("Arial", 40, "bold")).pack(pady=(0, 40))
 
         tk.Label(self.formulario, text="Nombre de usuario", background="#F3DCAB", font=("Arial",25, "bold")).pack(anchor="w")
-        self.nombre_usuario = tk.Entry(self.formulario, font=("Arial", 24))
-        self.nombre_usuario.pack(ipady=3, pady=(5, 30), fill="x")
+        self.inicio_usuario = tk.Entry(self.formulario, font=("Arial", 24))
+        self.inicio_usuario.pack(ipady=3, pady=(5, 30), fill="x")
 
         tk.Label(self.formulario, text="Contraseña", background="#F3DCAB", font=("Arial",25, "bold")).pack(anchor="w")
-        
-        self.contrasena_usuario = tk.Entry(self.formulario, font=("Arial", 24), show="*") 
-        self.contrasena_usuario.pack(ipady=3, pady=(5, 10), fill="x")
+        self.inicio_contrasena = tk.Entry(self.formulario, font=("Arial", 24), show="*") 
+        self.inicio_contrasena.pack(ipady=3, pady=(5, 10), fill="x")
 
         self.casilla_mostrar = tk.Checkbutton(self.formulario, text="Mostrar contraseña", background="#F3DCAB", font=("Arial", 12))
         self.casilla_mostrar.pack(anchor="w", pady=(0, 30))
@@ -56,10 +63,34 @@ class VentanaPrincipal:
         self.boton_iniciar = tk.Button(self.formulario, text="Iniciar", font=("Arial", 20, "bold"), bd=2, relief="raised")
         self.boton_iniciar.pack(pady=10, ipady=3, fill="x")
 
-        self.boton_registrar = tk.Button(self.formulario, text="Registrar", font=("Arial", 20, "bold"), bd=2, relief="raised")
+        self.boton_registrar = tk.Button(self.formulario, text="Registrar", font=("Arial", 20, "bold"), bd=2, relief="raised", command=self.registrar_usuario)
         self.boton_registrar.pack(pady=10, ipady=3, fill="x")
 
+    def registrar_usuario(self):
+        self.formulario.destroy()
 
+        self.formulario = tk.Frame(self.div_derecho, background="#F3DCAB")
+        self.formulario.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+
+        tk.Label(self.formulario, text="Registrarse", background="#F3DCAB", font=("Arial", 40, "bold")).pack(pady=(0, 40))
+
+        tk.Label(self.formulario, text="Nombre de usuario", background="#F3DCAB", font=("Arial",25, "bold")).pack(anchor="w")
+        self.registro_usuario = tk.Entry(self.formulario, font=("Arial", 24))
+        self.registro_usuario.pack(ipady=3, pady=(5, 20), fill="x")
+
+        tk.Label(self.formulario, text="Contraseña", background="#F3DCAB", font=("Arial",25, "bold")).pack(anchor="w")
+        self.registro_contrasena = tk.Entry(self.formulario, font=("Arial", 24), show="*") 
+        self.registro_contrasena.pack(ipady=3, pady=(5, 20), fill="x")
+
+        tk.Label(self.formulario, text="Rol", background="#F3DCAB", font=("Arial",25, "bold")).pack(anchor="w")
+        self.registro_rol = tk.Entry(self.formulario, font=("Arial", 24), show="*") 
+        self.registro_rol.pack(ipady=3, pady=(5, 20), fill="x")
+
+        self.boton_iniciar = tk.Button(self.formulario, text="Registrarse", font=("Arial", 20, "bold"), bd=2, relief="raised")
+        self.boton_iniciar.pack(pady=10, ipady=3, fill="x")
+
+        self.boton_registrar = tk.Button(self.formulario, text="Regresar", font=("Arial", 20, "bold"), bd=2, relief="raised", command=self.login_usuario)
+        self.boton_registrar.pack(pady=10, ipady=3, fill="x")
 
 if __name__ == "__main__":
     
