@@ -19,3 +19,15 @@ class UsuarioDAO(BaseDAO):
         )
 
         return self.insertar_datos(consulta, valores)
+    
+    def obtener_usuario_por_nombre(self, nombre_usuario: str):
+
+        consulta = """
+            SELECT id_usuario, contrasena, rol
+            FROM usuario
+            WHERE nombre_usuario = %s
+        """
+
+        valores = (nombre_usuario, )
+
+        return self.obtener_un_registro(consulta, valores)
