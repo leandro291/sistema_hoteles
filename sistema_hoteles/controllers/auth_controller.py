@@ -3,7 +3,7 @@ from pydantic import ValidationError
 
 from models import Usuario, UsuarioSchema
 from daos.usuario_dao import UsuarioDAO
-from utils.security import hashear_contrasena
+from utils.security import hashear_contrasena, validar_contrasena
 
 class AuthController:
     def __init__(self):
@@ -27,12 +27,37 @@ class AuthController:
         )
 
         conexion = self.db.obtener_conexion()
+
         try:
 
             dao_usuario = UsuarioDAO(conexion)
             return dao_usuario.insertar_nuevo_usuario(usuario)
         
+        except Exception as e:
+            raise Exception(f"Ha ocurrido un error en la Base de Datos: {e}")
+        
+    def iniciar_sesion(self, nombre_ingresado: str, contrasena_ingresada: str):
+        
+        conexion = self.db.obtener_conexion()
+
+        try:
             
+            dao_usuario = UsuarioDAO(conexion)
+            datos = dao_usuario.obtener_usuario_por_nombre(nombre_ingresado)
+
+            if not datos:
+                raise ValueError("El nombre o la contraseña es erroneo")
+            
+            id_usuario, contrasena, rol = datos
+
+            if not validar_contrasena(contrasena_ingresada, contrasena):
+                raise ValueError("El nombre o la contraseña es erroneo")
+            
+            return {
+                "id_usuario": id_usuario,
+                "nombre_usuario": nombre_ingresado,
+                "rol" : rol
+            }
 
         except Exception as e:
             raise Exception(f"Ha ocurrido un error en la Base de Datos: {e}")
