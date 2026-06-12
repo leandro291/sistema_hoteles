@@ -7,7 +7,7 @@ class UsuarioDAO(BaseDAO):
     def insertar_nuevo_usuario(self, usuario: "Usuario") -> None:
 
         consulta = """
-            INSERT INTO usuarios (nombre_usuario, contrasena, rol)
+            INSERT INTO usuario (nombre_usuario, contrasena, rol)
             VALUES (%s, %s, %s)
             RETURNING id_usuario
         """
