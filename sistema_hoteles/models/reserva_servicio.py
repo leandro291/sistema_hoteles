@@ -1,10 +1,4 @@
 from decimal import Decimal
-from pydantic import BaseModel
-
-class ReservaServicioSchema(BaseModel):
-    precio_unitario: Decimal
-    cantidad: int
-    subtotal: Decimal
 
 class ReservaServicio:
     def __init__(self, id_servicio: int, id_reserva: int, precio_unitario: Decimal, cantidad: int, 
