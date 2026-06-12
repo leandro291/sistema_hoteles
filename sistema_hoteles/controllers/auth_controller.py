@@ -3,6 +3,7 @@ from pydantic import ValidationError
 
 from models import Usuario, UsuarioSchema
 from daos.usuario_dao import UsuarioDAO
+from utils.security import hashear_contrasena
 
 class AuthController:
     def __init__(self):
@@ -21,7 +22,7 @@ class AuthController:
         
         usuario = Usuario(
             nombre=validador_usuario.nombre,
-            contrasena=validador_usuario.contrasena,
+            contrasena=hashear_contrasena(validador_usuario.contrasena),
             rol=validador_usuario.rol
         )
 
