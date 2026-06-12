@@ -20,6 +20,25 @@ class BaseDAO:
         finally:
             if cursor:
                 cursor.close()
+
+    def obtener_un_registro(self, sql: str, valores: tuple):
+
+        cursor = self.conexion.cursor()
+
+        try:
+
+            cursor.execute(sql, valores)
+
+            self.conexion.commit()
+            datos = cursor.fetchone()
+            return datos
+        
+        except Exception as e:
+            self.conexion.rollback()
+            raise Exception(f"Ha ocurrido un error en la Base de Datos: {e}")
+        finally:
+            if cursor:
+                cursor.close()
     
     def obtener_dato_por_id(self, sql: str, id: int) -> int:
 
