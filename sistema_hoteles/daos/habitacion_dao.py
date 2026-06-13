@@ -20,6 +20,33 @@ class HabitacionDAO(BaseDAO):
 
         return self.insertar_datos(consulta, valores)
     
+    def obtener_detalles_por_habitacion(self, id_habitacion: int):
+        
+        consulta = """
+
+            SELECT 
+                h.num_habitacion,
+                t.nombre,
+                t.capacidad,
+                t.precio,
+                h.estado,
+                h.num_piso
+            FROM habitacion h
+            JOIN tipo_habitacion t ON h.id_tipo_habitacion = t.id_tipo_habitacion
+            WHERE h.id_habitacion = %s
+
+        """
+
+        return self.obtener_dato_por_id(consulta, id_habitacion)
+    
+    def obtener_todas_las_habitaciones(self):
+
+        consulta = """
+            SELECT id_habitacion, num_habitacion FROM habitacion;
+        """
+
+        return self.obtener_datos(consulta)
+    
     def cambiar_estado_habitacion(self, id_habitacion: int, nuevo_estado: str) -> bool:
         
         consulta = """
