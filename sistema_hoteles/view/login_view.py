@@ -2,15 +2,16 @@ import os
 import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
+from typing import Dict
 
+from utils import limpiar_ventana
+from .dashboard_view import DashboardView
 from controllers.auth_controller import AuthController
 
-class VentanaPrincipal:
-    def __init__(self, root):
+class LoginView:
+    def __init__(self, root, manager):
         self.root = root
-        self.root.title("Sistema de gestion de hoteles")
-        self.root.geometry("1400x800")
-        self.root.resizable(False, False)
+        self.manager = manager
 
         self.configurar_interfaz()
 
@@ -127,7 +128,8 @@ class VentanaPrincipal:
 
         try:
             datos = controlador.iniciar_sesion(login_usuario, login_contrasena)
-            return datos
+            self.manager.mostrar_dashboard(datos)
+
         except ValueError as e:
             messagebox.showerror("Datos invalidados", str(e))
         except Exception as e:
@@ -137,6 +139,5 @@ class VentanaPrincipal:
 if __name__ == "__main__":
     
     ventana = tk.Tk()
-    aplicacion = VentanaPrincipal(ventana)
-
+    aplicacion = LoginView(ventana)
     ventana.mainloop()
