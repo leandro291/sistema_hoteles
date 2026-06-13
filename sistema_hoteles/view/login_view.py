@@ -17,8 +17,9 @@ class LoginView:
 
     def configurar_interfaz(self):
 
-        carpeta_actual = os.path.dirname(__file__)
-        ruta_imagen = os.path.join(carpeta_actual, 'logo.webp')
+        carpeta_vistas = os.path.dirname(__file__)
+        carpeta_raiz = os.path.dirname(carpeta_vistas)
+        ruta_imagen = os.path.join(carpeta_raiz, 'assets', 'login', 'logo.webp')
         imagen_original = Image.open(ruta_imagen)
         imagen_redimensionada = imagen_original.resize((350, 350))
         self.image_tk = ImageTk.PhotoImage(imagen_redimensionada)
