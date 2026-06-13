@@ -19,4 +19,15 @@ class TipoHabitacionDAO(BaseDAO):
         )
 
         return self.insertar_datos(consulta, valores)
+    
+    def obtener_todos_los_tipos(self) -> None:
+        
+        consulta = """
+            SELECT id_tipo_habitacion, nombre
+            FROM tipo_habitacion
+        """
+
+        return self.obtener_datos(consulta)
+    
+
 
