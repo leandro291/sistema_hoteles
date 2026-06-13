@@ -1,5 +1,8 @@
 import tkinter as tk
-from tkinter import ttk # OBLIGATORIO: Para poder usar las listas desplegables (Combobox)
+from tkinter import ttk
+from tkinter import messagebox 
+
+from controllers.habitacion_controller import HabitacionController
 
 class HabitacionView:
     def __init__(self, root, manager):
@@ -53,7 +56,7 @@ class HabitacionView:
 
         self.btn_agregar = tk.Button(
             self.sub_frame_botones, text="Agregar Habitación", font=("Arial", 16, "bold"), fg="#21DF96",
-            command=self.abrir_formulario_agregar_habitacion
+            command=self.editar_habitacion
         )
         self.btn_agregar.pack(side=tk.LEFT, padx=10)
 
@@ -77,43 +80,59 @@ class HabitacionView:
         self.btn_gestionar_tipos.pack(side=tk.LEFT, padx=(40, 10))
 
     def abrir_formulario_tipos(self):
-        ventana_tipos = tk.Toplevel(self.root)
-        ventana_tipos.title("Configurar Tipos de Habitación")
-        ventana_tipos.geometry("500x600")
-        ventana_tipos.resizable(False, False)
-        ventana_tipos.configure(background="#F3DCAB")
+        self.ventana_tipos = tk.Toplevel(self.root)
+        self.ventana_tipos.title("Configurar Tipos de Habitación")
+        self.ventana_tipos.geometry("500x600")
+        self.ventana_tipos.resizable(False, False)
+        self.ventana_tipos.configure(background="#F3DCAB")
 
         tk.Label(
-            ventana_tipos, text="CATÁLOGO DE TIPOS", bg="#F3DCAB", 
+            self.ventana_tipos, text="CREACION DE TIPOS", bg="#F3DCAB", 
             font=("Arial", 30, "bold"), pady=10
         ).pack(fill="x", side=tk.TOP, pady=(0, 20))
 
 
-        tk.Label(ventana_tipos, text="Nombre:", bg="#F3DCAB", font=("Arial", 25, "bold")).pack(anchor="w", padx=40)
-        self.tipo_hab_nombre = tk.Entry(ventana_tipos, font=("Arial", 22), bd=1, relief="solid")
+        tk.Label(self.ventana_tipos, text="Nombre:", bg="#F3DCAB", font=("Arial", 25, "bold")).pack(anchor="w", padx=40)
+        self.tipo_hab_nombre = tk.Entry(self.ventana_tipos, font=("Arial", 22), bd=1, relief="solid")
         self.tipo_hab_nombre.pack(fill="x", padx=40, pady=(0, 15))
 
-        # 2. Precio
-        tk.Label(ventana_tipos, text="Precio:", bg="#F3DCAB", font=("Arial", 25, "bold")).pack(anchor="w", padx=40)
-        self.tipo_hab_precio = tk.Entry(ventana_tipos, font=("Arial", 22), bd=1, relief="solid")
+        tk.Label(self.ventana_tipos, text="Precio:", bg="#F3DCAB", font=("Arial", 25, "bold")).pack(anchor="w", padx=40)
+        self.tipo_hab_precio = tk.Entry(self.ventana_tipos, font=("Arial", 22), bd=1, relief="solid")
         self.tipo_hab_precio.pack(fill="x", padx=40, pady=(0, 15))
 
-        tk.Label(ventana_tipos, text="Capacidad de Personas:", bg="#F3DCAB", font=("Arial", 25, "bold")).pack(anchor="w", padx=40)
-        self.tipo_hab_capacidad = tk.Spinbox(ventana_tipos, from_=1, to=10, font=("Arial", 22), bd=1, relief="solid")
+        tk.Label(self.ventana_tipos, text="Capacidad de Personas:", bg="#F3DCAB", font=("Arial", 25, "bold")).pack(anchor="w", padx=40)
+        self.tipo_hab_capacidad = tk.Spinbox(self.ventana_tipos, from_=1, to=10, font=("Arial", 22), bd=1, relief="solid")
         self.tipo_hab_capacidad.pack(fill="x", padx=40, pady=(0, 15))
 
-        tk.Label(ventana_tipos, text="Descripción:", bg="#F3DCAB", font=("Arial", 25, "bold")).pack(anchor="w", padx=40)
-        self.tipo_hab_descripcion = tk.Entry(ventana_tipos, font=("Arial", 22), bd=1, relief="solid")
+        tk.Label(self.ventana_tipos, text="Descripción:", bg="#F3DCAB", font=("Arial", 25, "bold")).pack(anchor="w", padx=40)
+        self.tipo_hab_descripcion = tk.Entry(self.ventana_tipos, font=("Arial", 22), bd=1, relief="solid")
         self.tipo_hab_descripcion.pack(fill="x", padx=40, pady=(0, 25))
 
         self.btn_guardar_tipo = tk.Button(
-            ventana_tipos, text="Guardar Nuevo Tipo", bg="#ffffff", fg="#40e794", 
-            font=("Arial", 20, "bold"), bd=2, relief="raised"
+            self.ventana_tipos, text="Guardar Nuevo Tipo", bg="#ffffff", fg="#40e794", 
+            font=("Arial", 20, "bold"), bd=2, relief="raised", command=self.ejecutar_formulario_tipo_habitacion
         )
         self.btn_guardar_tipo.pack(fill="x", padx=40)
 
-    def obtener_formulario_tipos(self):
-        pass
+    def ejecutar_formulario_tipo_habitacion(self):
+
+        nombre = self.tipo_hab_nombre.get()
+        precio = self.tipo_hab_precio.get()
+        capacidad = self.tipo_hab_capacidad.get()
+        descripcion = self.tipo_hab_descripcion.get()
+
+        controller = HabitacionController()
+
+        try:
+            controller.registrar_tipo_de_habitacion(nombre, precio, capacidad, descripcion)
+            messagebox.showinfo("Exito", "Tipo de habitacion registrado corretamente")
+            self.ventana_tipos.destroy()
+
+        except ValueError as e:
+            messagebox.showerror("Datos invalidados", str(e))
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+        
 
     def editar_habitacion(self):
         pass
