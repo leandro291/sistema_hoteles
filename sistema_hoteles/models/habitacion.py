@@ -4,9 +4,7 @@ from pydantic import BaseModel
 class HabitacionSchema(BaseModel):
     numero_piso: int
     numero_habitacion: int
-    estado: str
-
-
+    
 class Habitacion:
     def __init__(self, numero_piso: int, numero_habitacion: int, estado: str, id_tipo_habitacion: int, 
                  id_habitacion: int | None = None):
