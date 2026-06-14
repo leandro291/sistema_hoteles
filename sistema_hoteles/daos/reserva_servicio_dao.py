@@ -7,7 +7,7 @@ class ReservaServicioDAO(BaseDAO):
 
         consulta = """
             INSERT INTO reserva_servicio (id_servicio, id_reserva, precio_unitario, cantidad, subtotal)
-            VALUES (%s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s)
             RETURNING id_reserva_servicio
         """
 
@@ -21,52 +21,20 @@ class ReservaServicioDAO(BaseDAO):
 
         return self.insertar_datos(consulta, valores)
     
-    def eliminar_reserva_servicio(self, id_servicio: int, id_reserva: int):
+    def obtener_consumos_por_reserva(self, id_reserva: int):
 
-        cursor = self.conexion.cursor()
-        
         consulta = """
-            DELETE FROM reserva_servicio 
-            WHERE idservicio = %s AND idreserva = %s
+            SELECT 
+                rs.id_reserva_servicio, 
+                s.nombre,                
+                rs.precio_unitario,      
+                rs.cantidad,             
+                rs.subtotal              
+            FROM reserva_servicio rs
+            JOIN servicio s ON rs.id_servicio = s.id_servicio
+            WHERE rs.id_reserva = %s;
         """
-
-        valores = (id_servicio, id_reserva)
-
-        try:
-
-            cursor.execute(consulta, valores)
-
-            if cursor.rowcount == 0:
-                raise Exception("No se encontró el registro para eliminar")
-
-        except Exception as e:
-            raise e
-        finally:
-            cursor.close()
-
-    def obtener_total_consumo(self, id_reserva: int) -> float:
-
-        cursor = self.conexion.cursor()
         
-        consulta = """
-            SELECT COALESCE(SUM(subtotal), 0) 
-            FROM reserva_servicio 
-            WHERE id_reserva = %s;
-        """
-
         valores = (id_reserva, )
 
-        try:
-
-            cursor.execute(consulta, valores)
-            resultado = cursor.fetchone()
-
-            if not resultado:
-                raise Exception("No se ha eonctrado valor para el ID ingresado")
-            
-            return float(resultado[0])
-
-        except Exception as e:
-            raise e
-        finally:
-            cursor.close()    
+        return self.obtener_datos_por_id(consulta, valores)
