@@ -44,3 +44,13 @@ class ClienteController:
 
         except Exception as e:
             raise Exception(f"Ha ocurrido un error en la base de datos: {e}")
+        
+    def obtener_todos_clientes(self):
+        
+        conexion = self.db.obtener_conexion()
+
+        try:
+            dao_cliente = ClienteDAO(conexion)
+            return dao_cliente.obtener_todos_los_clientes()
+        except Exception as e:
+            raise Exception(f"Ha ocurrido un error en la base de datos: {e}")
