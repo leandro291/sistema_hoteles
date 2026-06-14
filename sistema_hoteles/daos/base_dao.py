@@ -75,6 +75,23 @@ class BaseDAO:
         finally:
             if cursor:
                 cursor.close()
+                
+    def obtener_datos_por_id(self, sql: str, id_obtenido: int) -> int:
+
+        cursor = self.conexion.cursor()
+
+        try:
+
+            cursor.execute(sql, (id_obtenido, ))
+            res = cursor.fetchall()
+
+            return res
+        
+        except Exception as e:
+            raise Exception(f"Ha ocurrido un error en la Base de Datos: {e}")
+        finally:
+            if cursor:
+                cursor.close() 
 
     def actualizar_dato_por_id(self, sql: str, id: int) -> None:
         pass
