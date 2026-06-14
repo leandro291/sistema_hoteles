@@ -47,10 +47,27 @@ class HabitacionDAO(BaseDAO):
 
         return self.obtener_datos(consulta)
     
+    def obtener_habitaciones_disponibles(self):
+
+        consulta = """
+            SELECT 
+                h.id_habitacion, 
+                h.num_habitacion, 
+                th.capacidad 
+            FROM habitacion h
+            JOIN tipo_habitacion th ON h.id_tipo_habitacion = th.id_tipo_habitacion
+            WHERE h.estado = 'Disponible';
+        """
+
+        return self.obtener_datos(consulta)
+
     def cambiar_estado_habitacion(self, id_habitacion: int, nuevo_estado: str) -> bool:
         
         consulta = """
-            UPDATE habitacion SET estado = %s WHERE idhabitacion = %s
+            UPDATE 
+            habitacion 
+            SET estado = %s 
+            WHERE id_habitacion = %s
         """
 
         valores = (nuevo_estado, id_habitacion)
@@ -62,23 +79,31 @@ class HabitacionDAO(BaseDAO):
         consulta = """
             SELECT th.precio
             FROM habitacion h
-            JOIN tipo_habitacion th ON h.id_habitacion = th.id_habitacion
-            WHERE h.idhabitacion = %s
+            JOIN tipo_habitacion th ON h.id_tipo_habitacion = th.id_tipo_habitacion
+            WHERE h.id_habitacion = %s
         """
 
-        valores = (id_habitacion,)
+        valores = (id_habitacion, )
 
-        return float(self.obtener_dato_por_id(consulta, valores))
+        resultado = self.obtener_dato_por_id(consulta, valores)
+        
+        if resultado:
+            return float(resultado[0]) 
+        return 0.0 
     
     def obtener_cantidad_por_habitacion(self, id_habitacion: int) -> int:
 
         consulta = """
-            SELECT th.cantidad
+            SELECT th.capacidad
             FROM habitacion h
-            JOIN tipo_habitacion th ON h.id_habitacion = th.id_habitacion
-            WHERE h.idhabitacion = %s
+            JOIN tipo_habitacion th ON h.id_tipo_habitacion = th.id_tipo_habitacion
+            WHERE h.id_habitacion = %s
         """
 
-        valores = (id_habitacion)
-
-        return int(self.obtener_dato_por_id(self,id_habitacion))
+        valores = (id_habitacion, )
+        resultado = self.obtener_dato_por_id(consulta, valores)
+        
+        
+        if resultado:
+            return int(resultado[0]) 
+        return 0
