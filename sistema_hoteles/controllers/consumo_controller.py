@@ -5,7 +5,6 @@ from models.reserva_servicio import ReservaServicio
 from daos.servicio_dao import ServicioDAO
 from daos.reserva_servicio_dao import ReservaServicioDAO
 
-
 class ConsumoController:
     def __init__(self):
         self.db = ConexionDB()
@@ -22,29 +21,36 @@ class ConsumoController:
             dao_servicio = ServicioDAO(conexion)
 
             precio_servicio = dao_servicio.obtener_precio_por_id(id_servicio)
+
+            if precio_servicio is None:
+                raise ValueError("El servicio seleccionado no existe o no tiene precio válido.")
+
             subtotal = cantidad * precio_servicio
 
-            reserva_servicio = ReservaServicio(id_servicio, id_reserva, cantidad, subtotal)
-            dao_reserva_servicio = ReservaServicioDAO(conexion)
-            dao_reserva_servicio.insertar_reserva_servicio(reserva_servicio)
+            reserva_servicio = ReservaServicio(
+                id_servicio=id_servicio,
+                id_reserva=id_reserva,
+                precio_unitario=precio_servicio,
+                cantidad=cantidad,
+                subtotal=subtotal,
+            )
 
-            conexion.commit()
+            dao_reserva_servicio = ReservaServicioDAO(conexion)
+            id_generado_reserva_servicio =dao_reserva_servicio.insertar_reserva_servicio(reserva_servicio)
+
+            return id_generado_reserva_servicio
 
         except Exception as e:
-            conexion.rollback()
-            raise Exception(f"Ha ocurrido un error en la Base de Datos: {e}")
-        
-    def anular_servicio(self, id_reserva: int, id_servicio):
+            raise Exception(f"Ha ocurrido un error en la base de datos: {e}")
+                
+    def obtener_historial_consumos(self, id_reserva: int):
 
         conexion = self.db.obtener_conexion()
+
         try:
-
-            dao_reserva_servicio = ReservaServicioDAO(conexion)
-            dao_reserva_servicio.eliminar_reserva_servicio(id_servicio, id_reserva)
-
-            conexion.commit()
-
+            dao_rs = ReservaServicioDAO(conexion) 
+            
+            return dao_rs.obtener_consumos_por_reserva(id_reserva)
+            
         except Exception as e:
-            conexion.rollback()
-            raise Exception(f"Ha ocurrido un error en la Base de Datos: {e}")
-        
+            raise Exception(f"Fallo al leer historial de BD: {e}")
