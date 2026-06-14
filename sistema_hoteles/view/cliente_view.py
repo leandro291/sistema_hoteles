@@ -8,6 +8,7 @@ class ClienteView:
         self.root = root
         self.manager = manager
         self.configurar_interfaz()
+        self.recargar_tabla_clientes()
 
     def configurar_interfaz(self):
         # --- HEADER ---
@@ -156,6 +157,21 @@ class ClienteView:
         self.tabla_clientes.heading("Direccion", text="Direccion")
         self.tabla_clientes.column("Direccion", width=200, anchor="w")
 
+    def recargar_tabla_clientes(self):
+
+        for item in self.tabla_clientes.get_children():
+            self.tabla_clientes.delete(item)
+
+        controller = ClienteController()
+        lista_clientes = controller.obtener_todos_clientes()
+
+        if not lista_clientes:
+            return
+        
+        for cliente in lista_clientes:
+            self.tabla_clientes.insert("", tk.END, values=cliente)
+
+
     def registrar_cliente(self):
         
         nombre = self.nombre.get()
@@ -172,6 +188,17 @@ class ClienteView:
                                         telefono, correo, direccion
                                         )
             messagebox.showinfo("Exito", "Cliente registrado correctamente en el sistema")
+
+            self.recargar_tabla_clientes()
+
+            self.nombre.delete(0, tk.END)
+            self.apellido.delete(0, tk.END)
+            self.tipo_documento.delete(0, tk.END)
+            self.numero_documento.delete(0, tk.END)
+            self.telefono.delete(0, tk.END)
+            self.correo.delete(0, tk.END)
+            self.direccion.delete(0, tk.END)
+
         except ValueError as e:
             messagebox.showerror("Datos Inválidos", str(e))
         except Exception as e:
