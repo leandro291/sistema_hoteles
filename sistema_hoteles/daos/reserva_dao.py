@@ -6,22 +6,20 @@ class ReservaDAO(BaseDAO):
     def insertar_reserva(self, reserva: "Reserva") -> int:
 
         consulta = """
-            INSERT INTO reserva (fecha_reserva, fecha_entrada, fecha_salida, cantidad_huespedes, estado_reserva, total, id_cliente)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-            RETURNING idreserva
+            INSERT INTO reserva (fecha_entrada, fecha_salida, estado_reserva, id_cliente, id_usuario)
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING id_reserva
         """
 
         valores = (
-            reserva.fecha_reserva,
             reserva.fecha_entrada,
             reserva.fecha_salida,
-            reserva.cantidad_huesped,
             reserva.estado_reserva,
-            reserva.total,
-            reserva.id_cliente
+            reserva.id_cliente,
+            reserva.id_usuario
         )
 
-        return self.insertar_y_retornar_id(consulta, valores)
+        return self.insertar_datos(consulta, valores)
     
     def cambiar_estado_reserva(self, id_reserva: int, nuevo_estado: str) -> bool:
         
@@ -32,6 +30,23 @@ class ReservaDAO(BaseDAO):
         valores = (nuevo_estado, id_reserva)
 
         self.cambiar_estado(consulta, valores)
+
+    def obtener_reservas_en_curso(self):
+
+        consulta = """
+            SELECT 
+                r.id_reserva, 
+                h.num_habitacion, 
+                c.nombre, 
+                c.apellido
+            FROM reserva r
+            JOIN cliente c ON r.id_cliente = c.id_cliente
+            JOIN reserva_habitacion rh ON r.id_reserva = rh.id_reserva
+            JOIN habitacion h ON rh.id_habitacion = h.id_habitacion
+            WHERE r.estado_reserva = 'En curso';
+        """
+
+        return self.obtener_datos(consulta)
     
     def obtener_total_reserva(self, id_reserva: int) -> float:
 
