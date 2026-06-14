@@ -103,3 +103,13 @@ class HabitacionController:
 
         except Exception as e:
             raise Exception(f"Ha ocurrido un error en la base de datos: {e}")
+        
+    def obtener_habitaciones_disponibles(self):
+        conexion = self.db.obtener_conexion()
+        try:
+
+            dao_habitacion = HabitacionDAO(conexion)
+            return dao_habitacion.obtener_habitaciones_disponibles()
+
+        except Exception as e:
+            raise Exception(f"Ha ocurrido un error en la base de datos: {e}")
