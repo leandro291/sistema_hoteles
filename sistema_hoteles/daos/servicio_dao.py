@@ -19,31 +19,35 @@ class ServicioDAO(BaseDAO):
 
         return self.insertar_datos(consulta, valores)
     
+    def obtener_todos_los_servicios(self):
+
+        consulta = """
+            SELECT 
+                id_servicio,
+                nombre,
+                descripcion,
+                precio
+            FROM servicio
+        """
+
+        return self.obtener_datos(consulta)
+    
     def obtener_precio_por_id(self, id_servicio: int) -> int:
 
         consulta = """
                 SELECT precio 
                 FROM servicio
-                WHERE idservicio = %s
+                WHERE id_servicio = %s
             """
         
         valores = (id_servicio,)
 
-        cursor = self.conexion.cursor()
+        resultado = self.obtener_dato_por_id(consulta, valores)
 
-        try:
-            cursor.execute(consulta, valores)
-            resultado = cursor.fetchone()    
-
-            if resultado is None:
-                raise Exception("El servicio no existe o no tiene un tipo asignado")
-            
+        if resultado:
             return float(resultado[0])
-        
-        except Exception as e:
-            raise e
-        finally:
-            cursor.close()
+            
+        return 0.0 
 
 
 
