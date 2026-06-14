@@ -5,11 +5,11 @@ class AcompananteSchema(BaseModel):
     apellido: str
     tipo_documento: str
     numero_documento: str
-    edad: int
+    telefono: str
 
 class Acompanante:
-    def __init__(self, id_reserva_habitacion: int, nombre: str, apellido: str, telefono: str, 
-                 tipo_documento: str, numero_documento: str, id_acompanante: None = None):
+    def __init__(self, id_reserva_habitacion: int, nombre: str, apellido: str, 
+                 tipo_documento: str, numero_documento: str, telefono: str, id_acompanante: None = None):
         self.id_acompanante = id_acompanante
 
         self.nombre = nombre
