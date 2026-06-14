@@ -2,3 +2,5 @@ from .caja_controller import CajaController
 from .consumo_controller import ConsumoController
 from .recepcion_controller import RecepcionController
 from .auth_controller import AuthController
+from .habitacion_controller import HabitacionController
+from .cliente_controller import ClienteController
