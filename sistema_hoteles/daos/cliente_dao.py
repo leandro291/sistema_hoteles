@@ -22,7 +22,23 @@ class ClienteDAO(BaseDAO):
         )
 
         return self.insertar_datos(sql, valores)
+    
+    def obtener_todos_los_clientes(self):
 
+        consulta = """
+            SELECT 
+                id_cliente,
+                nombre,
+                apellido,
+                tipo_documento,
+                num_documento,
+                telefono,
+                correo,
+                direccion
+            FROM cliente
+        """
+
+        return self.obtener_datos(consulta)
 
 
 
