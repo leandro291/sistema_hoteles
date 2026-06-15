@@ -25,7 +25,7 @@ class ReservaDAO(BaseDAO):
     def cambiar_estado_reserva(self, id_reserva: int, nuevo_estado: str) -> None:
         
         consulta = """
-            UPDATE reserva SET estado_reserva = %s WHERE idreserva = %s
+            UPDATE reserva SET estado_reserva = %s WHERE id_reserva = %s
         """
 
         valores = (nuevo_estado, id_reserva)
