@@ -1,11 +1,9 @@
 import os
 import tkinter as tk
+from tkinter import ttk
 from tkinter import messagebox
 from PIL import Image, ImageTk
-from typing import Dict
 
-from utils import limpiar_ventana
-from .dashboard_view import DashboardView
 from controllers.auth_controller import AuthController
 
 class LoginView:
@@ -22,6 +20,7 @@ class LoginView:
         ruta_imagen = os.path.join(carpeta_raiz, 'assets', 'login', 'logo.webp')
         imagen_original = Image.open(ruta_imagen)
         imagen_redimensionada = imagen_original.resize((350, 350))
+        
         self.image_tk = ImageTk.PhotoImage(imagen_redimensionada)
         self.div_izquierdo = tk.Frame(self.root, background="#E2E2E2")
         self.div_izquierdo.pack(side=tk.LEFT, fill="both", expand=True)
@@ -61,7 +60,11 @@ class LoginView:
         self.inicio_contrasena = tk.Entry(self.formulario, font=("Arial", 24), show="*") 
         self.inicio_contrasena.pack(ipady=3, pady=(5, 10), fill="x")
 
-        self.casilla_mostrar = tk.Checkbutton(self.formulario, text="Mostrar contraseña", background="#F3DCAB", font=("Arial", 12))
+        self.var_mostrar_pwd = tk.BooleanVar()
+        self.casilla_mostrar = tk.Checkbutton(
+            self.formulario, text="Mostrar contraseña", background="#F3DCAB", 
+            font=("Arial", 12), variable=self.var_mostrar_pwd, command=self.toggle_contrasena_login
+        )
         self.casilla_mostrar.pack(anchor="w", pady=(0, 30))
 
         self.boton_iniciar = tk.Button(self.formulario, text="Iniciar", font=("Arial", 20, "bold"), bd=2, relief="raised", command=self.ejecutar_login)
@@ -87,7 +90,9 @@ class LoginView:
         self.registro_contrasena.pack(ipady=3, pady=(5, 20), fill="x")
 
         tk.Label(self.formulario, text="Rol", background="#F3DCAB", font=("Arial",25, "bold")).pack(anchor="w")
-        self.registro_rol = tk.Entry(self.formulario, font=("Arial", 24)) 
+        self.registro_rol = ttk.Combobox(self.formulario, font=("Arial", 24), state="readonly")
+        self.registro_rol['values'] = ["Recepcionista", "Administrador"]
+        self.registro_rol.current(0)
         self.registro_rol.pack(ipady=3, pady=(5, 20), fill="x")
 
         self.boton_registrarse = tk.Button(self.formulario, text="Registrarse", font=("Arial", 20, "bold"), bd=2, relief="raised", command=self.ejecutar_registro)
@@ -98,8 +103,8 @@ class LoginView:
 
     def ejecutar_registro(self):
 
-        nombre = self.registro_usuario.get()
-        contrasena = self.registro_contrasena.get()
+        nombre = self.registro_usuario.get().strip()
+        contrasena = self.registro_contrasena.get() 
         rol = self.registro_rol.get()
 
         controlador = AuthController()
@@ -122,7 +127,7 @@ class LoginView:
     
     def ejecutar_login(self):
 
-        login_usuario = self.inicio_usuario.get()
+        login_usuario = self.inicio_usuario.get().strip()
         login_contrasena = self.inicio_contrasena.get()
 
         controlador = AuthController()
@@ -135,6 +140,13 @@ class LoginView:
             messagebox.showerror("Datos invalidados", str(e))
         except Exception as e:
             messagebox.showerror("Error", str(e))
+
+    def toggle_contrasena_login(self):
+        
+        if self.var_mostrar_pwd.get():
+            self.inicio_contrasena.config(show="")
+        else:
+            self.inicio_contrasena.config(show="*")
 
 
 if __name__ == "__main__":
