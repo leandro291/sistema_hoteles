@@ -6,8 +6,8 @@ class HabitacionSchema(BaseModel):
     numero_habitacion: int
     
 class Habitacion:
-    def __init__(self, numero_piso: int, numero_habitacion: int, estado: str, id_tipo_habitacion: int, 
-                 id_habitacion: int | None = None):
+    def __init__(self, numero_piso: int, numero_habitacion: int, id_tipo_habitacion: int, 
+                 id_habitacion: int | None = None, estado: str = None):
         self.id_habitacion = id_habitacion
 
         self.numero_piso = numero_piso
