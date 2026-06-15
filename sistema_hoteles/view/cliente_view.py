@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+
 from controllers.cliente_controller import ClienteController
 
 class ClienteView:
@@ -11,7 +12,8 @@ class ClienteView:
         self.recargar_tabla_clientes()
 
     def configurar_interfaz(self):
-        # --- HEADER ---
+
+        # --- Cabecera principal ---
         self.frame_header = tk.Frame(self.root, background="#E0E0E0", bd=2, relief="groove")
         self.frame_header.pack(side=tk.TOP, fill="x")
 
@@ -26,7 +28,7 @@ class ClienteView:
             font=("Arial", 40, "bold"), fg="#333333"
         ).pack(pady=10)
 
-        # --- CONTENEDOR PRINCIPAL ---
+        # --- Contenedor principal ---
         self.frame_main = tk.Frame(self.root, background="#F3DCAB")
         self.frame_main.pack(side=tk.TOP, fill="both", expand=True, padx=10, pady=10)
 
@@ -108,9 +110,9 @@ class ClienteView:
         self.btn_modificar.grid(row=1, column=1, padx=10)
 
     def menu_tablas(self):
+
         # Configuración del estilo de la tabla
         estilo = ttk.Style()
-        estilo.theme_use("default")
         estilo.configure("Treeview.Heading", font=("Arial", 18, "bold"), background="#E0E0E0", foreground="#333")
         estilo.configure("Treeview", font=("Arial", 16), rowheight=25)
 
@@ -174,13 +176,17 @@ class ClienteView:
 
     def registrar_cliente(self):
         
-        nombre = self.nombre.get()
-        apellido = self.apellido.get()
-        tipo_documento = self.tipo_documento.get()
-        numero_documento = self.numero_documento.get()
-        telefono = self.telefono.get()
-        correo = self.correo.get()
-        direccion = self.direccion.get()
+        nombre = self.nombre.get().strip()
+        apellido = self.apellido.get().strip()
+        tipo_documento = self.tipo_documento.get().strip()
+        numero_documento = self.numero_documento.get().strip()
+        telefono = self.telefono.get().strip()
+        correo = self.correo.get().strip()
+        direccion = self.direccion.get().strip()
+
+        if not nombre or not apellido or not numero_documento:
+            messagebox.showwarning("Aviso", "Nombre, Apellido y Numero de Documento son obligatorios")
+            return
 
         try:
             controller = ClienteController()
@@ -206,7 +212,150 @@ class ClienteView:
 
 
     def eliminar_cliente(self):
-        pass
+        seleccion = self.tabla_clientes.selection()
+
+        if not seleccion:
+            messagebox.showwarning("Aviso", "Selecciona un cliente de la tabla para eliminar.")
+            return
+
+        # Extraer los datos de la fila seleccionada
+        item = self.tabla_clientes.item(seleccion[0])
+        valores = item['values']
+        id_cliente = valores[0]
+        nombre_completo = f"{valores[1]} {valores[2]}"
+
+        # Confirmacion para eliminar los datos
+        confirmar = messagebox.askyesno(
+            "Confirmar Eliminación",
+            f"¿Estás seguro de eliminar permanentemente a {nombre_completo}?"
+        )
+
+        if confirmar:
+            try:
+                controller = ClienteController()
+                controller.eliminar_cliente(id_cliente)
+                
+                messagebox.showinfo("Éxito", "Cliente eliminado correctamente.")
+                self.recargar_tabla_clientes()
+            except Exception as e:
+                messagebox.showerror("Error Crítico", f"No se pudo eliminar al cliente: {e}")
+
 
     def modificar_cliente(self):
-        pass
+        seleccion = self.tabla_clientes.selection()
+
+        if not seleccion:
+            messagebox.showwarning("Aviso", "Selecciona un cliente de la tabla para modificar")
+            return
+
+        # Extraemos los datos del Treeview para inyectarlos en el modal
+        item = self.tabla_clientes.item(seleccion[0])
+        valores = item['values']
+
+        # Guardamos el ID en la instancia para usarlo al ejecutar el UPDATE
+        self.id_cliente_edicion = valores[0]
+
+        # Construcción del Modal de Edición
+        self.ventana_editar = tk.Toplevel(self.root)
+        self.ventana_editar.title("Modificar Cliente")
+        self.ventana_editar.geometry("450x600")
+        self.ventana_editar.resizable(False, False)
+        self.ventana_editar.configure(background="#F3DCAB")
+        self.ventana_editar.grab_set()
+
+        tk.Label(
+            self.ventana_editar, text="EDITAR CLIENTE", bg="#F3DCAB",
+            font=("Arial", 24, "bold"), pady=10
+        ).pack(fill="x")
+
+        form_frame = tk.Frame(self.ventana_editar, bg="#F3DCAB")
+        form_frame.pack(pady=10)
+
+        # Nombre
+        tk.Label(form_frame, text="Nombre:", bg="#F3DCAB", font=("Arial", 16, "bold")).grid(row=0, column=0, sticky="w", pady=5)
+        self.edit_nombre = tk.Entry(form_frame, font=("Arial", 16), bd=1, relief="solid", width=20)
+        self.edit_nombre.insert(0, valores[1])
+        self.edit_nombre.grid(row=0, column=1, pady=5, padx=5)
+
+        # Apellido
+        tk.Label(form_frame, text="Apellido:", bg="#F3DCAB", font=("Arial", 16, "bold")).grid(row=1, column=0, sticky="w", pady=5)
+        self.edit_apellido = tk.Entry(form_frame, font=("Arial", 16), bd=1, relief="solid", width=20)
+        self.edit_apellido.insert(0, valores[2])
+        self.edit_apellido.grid(row=1, column=1, pady=5, padx=5)
+
+        # Tipo Documento
+        tk.Label(form_frame, text="Tipo doc:", bg="#F3DCAB", font=("Arial", 16, "bold")).grid(row=2, column=0, sticky="w", pady=5)
+        self.edit_tipo_doc = ttk.Combobox(form_frame, font=("Arial", 16), state="readonly", width=19)
+        self.edit_tipo_doc['values'] = ["DNI", "Carnet Extranjería"]
+        self.edit_tipo_doc.set(valores[3]) # Selecciona el actual
+        self.edit_tipo_doc.grid(row=2, column=1, pady=5, padx=5)
+
+        # Numero Documento
+        tk.Label(form_frame, text="Num doc:", bg="#F3DCAB", font=("Arial", 16, "bold")).grid(row=3, column=0, sticky="w", pady=5)
+        self.edit_num_doc = tk.Entry(form_frame, font=("Arial", 16), bd=1, relief="solid", width=20)
+        self.edit_num_doc.insert(0, valores[4])
+        self.edit_num_doc.grid(row=3, column=1, pady=5, padx=5)
+
+        # Teléfono
+        tk.Label(form_frame, text="Telefono:", bg="#F3DCAB", font=("Arial", 16, "bold")).grid(row=4, column=0, sticky="w", pady=5)
+        self.edit_telefono = tk.Entry(form_frame, font=("Arial", 16), bd=1, relief="solid", width=20)
+        self.edit_telefono.insert(0, (valores[5])) 
+        self.edit_telefono.grid(row=4, column=1, pady=5, padx=5)
+
+        # Correo
+        tk.Label(form_frame, text="Correo:", bg="#F3DCAB", font=("Arial", 16, "bold")).grid(row=5, column=0, sticky="w", pady=5)
+        self.edit_correo = tk.Entry(form_frame, font=("Arial", 16), bd=1, relief="solid", width=20)
+        self.edit_correo.insert(0, valores[6])
+        self.edit_correo.grid(row=5, column=1, pady=5, padx=5)
+
+        # Dirección
+        tk.Label(form_frame, text="Direccion:", bg="#F3DCAB", font=("Arial", 16, "bold")).grid(row=6, column=0, sticky="w", pady=5)
+        self.edit_direccion = tk.Entry(form_frame, font=("Arial", 16), bd=1, relief="solid", width=20)
+        self.edit_direccion.insert(0, valores[7])
+        self.edit_direccion.grid(row=6, column=1, pady=5, padx=5)
+
+        # Botón de Guardar
+        btn_guardar = tk.Button(
+            self.ventana_editar, text="Guardar Cambios", font=("Arial", 18, "bold"),
+            bg="#1565C0", fg="white", bd=2, relief="raised", command=self.ejecutar_modificacion_cliente
+        )
+        btn_guardar.pack(pady=20, fill="x", padx=50)
+
+
+    def ejecutar_modificacion_cliente(self):
+
+        nombre = self.edit_nombre.get().strip()
+        apellido = self.edit_apellido.get().strip()
+        tipo_doc = self.edit_tipo_doc.get().strip()
+        num_doc = self.edit_num_doc.get().strip()
+        telefono = self.edit_telefono.get().strip()
+        correo = self.edit_correo.get().strip()
+        direccion = self.edit_direccion.get().strip()
+
+        if not nombre or not apellido or not num_doc:
+            messagebox.showwarning("Aviso", "Nombre, Apellido y Numero de Documento no pueden quedar vacíos.")
+            return
+
+        try:
+            controller = ClienteController()
+
+            controller.actualizar_cliente(
+                self.id_cliente_edicion,
+                nombre, 
+                apellido, 
+                tipo_doc, 
+                num_doc, 
+                telefono, 
+                correo, 
+                direccion
+            )
+
+            messagebox.showinfo("Éxito", "Datos del cliente actualizados correctamente.")
+            
+            self.ventana_editar.destroy()
+            self.recargar_tabla_clientes()
+            
+        except ValueError as e:
+            messagebox.showerror("Datos Inválidos", str(e))
+        except Exception as e:
+            messagebox.showerror("Error Crítico de BD", str(e))
