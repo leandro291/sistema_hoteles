@@ -1,5 +1,5 @@
-from typing import Tuple, Any
 from daos.base_dao import BaseDAO
+from typing import Tuple, Any
 from models.habitacion import Habitacion
 
 class HabitacionDAO(BaseDAO):
@@ -77,6 +77,16 @@ class HabitacionDAO(BaseDAO):
         valores = (nuevo_estado, id_habitacion)
 
         self.cambiar_estado(consulta, valores)
+
+    def cambiar_estado_por_reserva(self, id_reserva: int):
+        
+        sql = """
+            UPDATE habitacion 
+            SET estado = 'Disponible' 
+            WHERE id_habitacion IN (SELECT id_habitacion FROM reserva_habitacion WHERE id_reserva = %s)
+        """
+
+        self.cambiar_estado(sql, (id_reserva, ))
         
     def obtener_precio_por_habitacion(self, id_habitacion: int) -> float:
 
