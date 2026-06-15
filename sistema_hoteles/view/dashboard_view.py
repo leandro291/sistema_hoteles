@@ -49,10 +49,10 @@ class DashboardView:
         self.icono_informacion = self.cargar_icono('logo_informacion.webp')
 
         self.boton_habitacion = self.modelo_botones("Habitaciones", self.icono_habitacion, self.manager.mostrar_habitaciones)
-        self.boton_asignacion = self.modelo_botones("Asignaciones", self.icono_asignacion, self.manager.mostrar_asignaciones)
         self.boton_clientes = self.modelo_botones("Clientes", self.icono_clientes, self.manager.mostrar_clientes)
+        self.boton_asignacion = self.modelo_botones("Asignaciones", self.icono_asignacion, self.manager.mostrar_asignaciones)
+        self.boton_servicios= self.modelo_botones("Servicios", self.icono_informacion, self.manager.mostrar_servicios)
         self.boton_pago = self.modelo_botones("Pagos", self.icono_pagos, self.manager.mostrar_pagos)
-        self.boton_informacion= self.modelo_botones("Información", self.icono_informacion, self.manager.mostrar_servicios)
 
     def registros_base_de_datos(self):
 
