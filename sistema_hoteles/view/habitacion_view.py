@@ -94,7 +94,6 @@ class HabitacionView:
         )
         self.btn_gestionar_tipos.pack(side=tk.LEFT, padx=(40, 10))
 
-
     def refrescar_lista_habitaciones(self):
         self.lista_habitaciones.delete(0, tk.END)
         self.ids_memoria = [] 
@@ -322,7 +321,6 @@ class HabitacionView:
                 messagebox.showinfo("Éxito", "Habitación eliminada correctamente.")
                 self.refrescar_lista_habitaciones()
                 
-                # Limpiar el detalle de la derecha si era la habitación seleccionada
                 for widget in self.caja_tabla.winfo_children():
                     widget.destroy()
                     
@@ -427,6 +425,8 @@ class HabitacionView:
             
             for widget in self.caja_tabla.winfo_children():
                 widget.destroy()
+
+            self.mostrar_detalle_habitacion(self.id_hab_edicion)
             
         except ValueError as e:
             messagebox.showerror("Datos Inválidos", str(e))
