@@ -1,11 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from decimal import Decimal
 from typing import List
 
 class TipoHabitacionSchema(BaseModel):
     nombre: str
-    precio : Decimal
-    capacidad: int
+    precio: Decimal = Field(gt=0)
+    capacidad: int = Field(gt=1)
     descripcion: str
 
 class TipoHabitacion:
