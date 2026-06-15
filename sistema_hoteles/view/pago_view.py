@@ -112,9 +112,10 @@ class PagoView:
                     estado = item[6]
                     usuario = item[7]
                     
-                self.tabla_pagos.insert("", "end", values=(
-                    id_pago, fecha, cliente, monto, metodo, comprobante, estado, usuario
-                ))
+                    
+                    self.tabla_pagos.insert("", "end", values=(
+                        id_pago, fecha, cliente, monto, metodo, comprobante, estado, usuario
+                    ))
 
         except Exception as e:
             messagebox.showerror("Error de BD", f"Error cargando historial:\n{e}")
@@ -238,9 +239,13 @@ class PagoView:
                 costo_extras = float(fila[3])
                 gran_total = float(fila[4])
                 
-                self.var_costo_cuarto.set(f"${costo_cuarto:.2f}")
-                self.var_costo_extras.set(f"${costo_extras:.2f}")
-                self.var_gran_total.set(f"${gran_total:.2f}")
+                # BLINDAJE: Guardamos el número en la RAM (Memoria lógica)
+                # Esto es lo que va a la base de datos, NO lo que está en la pantalla.
+                self.gran_total_memoria = gran_total
+                
+                self.var_costo_cuarto.set(f"${costo_cuarto:,.2f}")
+                self.var_costo_extras.set(f"${costo_extras:,.2f}")
+                self.var_gran_total.set(f"${gran_total:,.2f}")
                 
         except Exception as e:
             messagebox.showerror("Error Matemático", str(e))
@@ -256,29 +261,39 @@ class PagoView:
             metodo = self.combo_metodo.get()
             comprobante = self.combo_comprobante.get()
             
-            monto_texto = self.var_gran_total.get().replace("$", "")
-            monto_total = float(monto_texto)
+            # BLINDAJE: Usamos la variable numérica pura, evitamos extraer de StringVars
+            monto_total = getattr(self, 'gran_total_memoria', 0.0)
 
             if monto_total <= 0:
                 raise ValueError("El monto total a pagar debe ser mayor a 0.00")
 
             confirmar = messagebox.askyesno(
                 "Confirmar Transacción", 
-                f"¿Proceder con el cobro de ${monto_total:.2f} vía {metodo}?\nLa habitación será liberada."
+                f"¿Proceder con el cobro de ${monto_total:,.2f} vía {metodo}?\nLa habitación será liberada."
             )
             
             if not confirmar:
                 return
 
-            id_usuario_actual = self.manager.usuario_actual['id_usuario']
-            print(id_usuario_actual)
+            # BLINDAJE: Extraemos el usuario sin importar si es dict o entero
+            usr_actual = self.manager.usuario_actual
+            if isinstance(usr_actual, dict):
+                id_usuario_actual = int(usr_actual.get('id_usuario', usr_actual.get('id', 0)))
+            else:
+                id_usuario_actual = int(usr_actual) if usr_actual else 0
+
+            if not id_usuario_actual:
+                raise ValueError("Sesión inválida: No se detectó al usuario.")
             
             controller = CajaController()
+            # Esta línea ya no congelará la BD porque corregimos el controlador
             controller.registrar_pago_completo(id_reserva_real, monto_total, metodo, comprobante, id_usuario_actual)
 
             messagebox.showinfo("Éxito", "Pago registrado y habitación liberada correctamente.")
             
             self.modal.destroy()      
+            
+            # Repinta la tabla (ahora sí funcionará porque SQL Server liberó la tabla)
             self.cargar_datos_pagos() 
 
         except ValueError as ve:
