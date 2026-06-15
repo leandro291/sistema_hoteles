@@ -38,5 +38,3 @@ class ConexionDB:
 
 if __name__ == "__main__":
     db = ConexionDB()
-
-    print(db.obtener_conexion())
