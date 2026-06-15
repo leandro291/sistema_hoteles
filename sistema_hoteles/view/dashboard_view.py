@@ -1,8 +1,11 @@
-import tkinter as tk
-from PIL import Image, ImageTk
-
-from utils import limpiar_ventana
 import os
+import tkinter as tk
+from tkinter import messagebox
+from PIL import Image, ImageTk
+from utils import limpiar_ventana
+
+from controllers.habitacion_controller import HabitacionController
+from controllers.cliente_controller import ClienteController
 
 class DashboardView:
     def __init__(self, root, manager):
@@ -10,6 +13,7 @@ class DashboardView:
         self.manager = manager
 
         self.configurar_intefaz()
+        self.actualizar_reporte_dashboard()
     
     def configurar_intefaz(self):
 
@@ -44,11 +48,11 @@ class DashboardView:
         self.icono_pagos = self.cargar_icono('logo_pago.webp')
         self.icono_informacion = self.cargar_icono('logo_informacion.webp')
 
-        self.boton_habitacion = self.modelo_botones("Habitaciones", self.icono_habitacion)
-        self.boton_asignacion = self.modelo_botones("Asignaciones", self.icono_asignacion)
-        self.boton_clientes   = self.modelo_botones("Clientes", self.icono_clientes)
-        self.boton_pago       = self.modelo_botones("Pagos", self.icono_pagos)
-        self.boton_informacion= self.modelo_botones("Información", self.icono_informacion)
+        self.boton_habitacion = self.modelo_botones("Habitaciones", self.icono_habitacion, self.manager.mostrar_habitaciones)
+        self.boton_asignacion = self.modelo_botones("Asignaciones", self.icono_asignacion, self.manager.mostrar_asignaciones)
+        self.boton_clientes = self.modelo_botones("Clientes", self.icono_clientes, self.manager.mostrar_clientes)
+        self.boton_pago = self.modelo_botones("Pagos", self.icono_pagos, self.manager.mostrar_pagos)
+        self.boton_informacion= self.modelo_botones("Información", self.icono_informacion, self.manager.mostrar_servicios)
 
     def registros_base_de_datos(self):
 
@@ -67,8 +71,11 @@ class DashboardView:
         self.habitaciones_ocupadas = self.crear_tarjetas_datos("Habitaciones\n Ocupadas", 0)
         self.total_clientes = self.crear_tarjetas_datos("Total de\n Clientes", 0)
 
-        self.boton_registrar = tk.Button(self.vista_datos, text="Actualizar reporte", font=("Arial", 20, "bold"), bd=2, relief="raised")
-        self.boton_registrar.pack()
+        self.boton_actualizar = tk.Button(
+            self.vista_datos, text="Actualizar reporte", font=("Arial", 20, "bold"), 
+            bd=2, relief="raised", command=self.actualizar_reporte_dashboard
+        )
+        self.boton_actualizar.pack()
 
         self.vista_imagen = tk.Frame(self.frame_footer, background="#F3DCAB")
         self.vista_imagen.pack(side=tk.LEFT, expand=True, fill="both")
@@ -116,7 +123,7 @@ class DashboardView:
             print(f"No se encontro la imagen {nombre_archivo}")
             return tk.PhotoImage()
 
-    def modelo_botones(self, text, image, command=None):
+    def modelo_botones(self, text, image, command):
         boton = tk.Button(
             self.contenedor_botones, text=text, image=image, 
             compound=tk.TOP, font=("Arial", 20, "bold"), bd=2, relief="raised",
@@ -125,6 +132,24 @@ class DashboardView:
         boton.pack(side=tk.LEFT, pady=10, padx=15)
 
         return boton
+
+    def actualizar_reporte_dashboard(self):
+        try:
+            controller_hab = HabitacionController()
+            controller_client = ClienteController()
+
+            total_hab = controller_hab.contar_hab_totales()
+            hab_disp = controller_hab.contar_hab_disponibles()
+            hab_ocup = controller_hab.contar_hab_ocupadas()
+            total_cli = controller_client.contar_total_clientes()
+
+            self.total_habitaciones.config(text=str(total_hab))
+            self.habitaciones_disponibles.config(text=str(hab_disp))
+            self.habitaciones_ocupadas.config(text=str(hab_ocup))
+            self.total_clientes.config(text=str(total_cli))
+
+        except Exception as e:
+            messagebox.showerror("Error de Carga", f"No se pudo actualizar el reporte:\n{e}")
 
     def cerrar_sesion(self):
         limpiar_ventana(self.root)
