@@ -199,10 +199,14 @@ class HabitacionView:
         self.ventana_tipos.grab_set()
 
     def ejecutar_formulario_tipo_habitacion(self):
-        nombre = self.tipo_hab_nombre.get()
-        precio = self.tipo_hab_precio.get()
-        capacidad = self.tipo_hab_capacidad.get()
-        descripcion = self.tipo_hab_descripcion.get()
+        nombre = self.tipo_hab_nombre.get().strip()
+        precio = self.tipo_hab_precio.get().strip()
+        capacidad = self.tipo_hab_capacidad.get().strip()
+        descripcion = self.tipo_hab_descripcion.get().strip()
+
+        if not nombre or not precio or not capacidad:
+            messagebox.showwarning("Aviso", "Los campos Nombre, Precio y Capacidad no pueden quedar vacíos.")
+            return
 
         controller = HabitacionController()
 
@@ -264,9 +268,10 @@ class HabitacionView:
         self.tipo_habitacion.current(0) 
 
     def ejecutar_registro_habitacion(self):
-        piso = self.num_piso.get()
-        numero = self.num_habitacion.get()
-        indice_seleccionado = self.tipo_habitacion.current() 
+
+        piso = self.num_piso.get().strip()
+        numero = self.num_habitacion.get().strip()
+        indice_seleccionado = self.tipo_habitacion.current()
         
         if not piso or not numero:
             messagebox.showerror("Error", "Los campos Piso y Número son obligatorios")
@@ -291,8 +296,139 @@ class HabitacionView:
         except Exception as e:
             messagebox.showerror("Error Crítico de BD", str(e))
 
-    def editar_habitacion(self):
-        pass
-
     def eliminar_habitacion(self):
-        pass
+        
+        seleccion = self.lista_habitaciones.curselection()
+        if not seleccion:
+            messagebox.showwarning("Aviso", "Selecciona una habitación de la lista para eliminar.")
+            return
+        
+        if self.lista_habitaciones.get(seleccion[0]) == "Sin habitaciones":
+            return
+        
+        id_hab = self.ids_memoria[seleccion[0]]
+        nombre_hab = self.lista_habitaciones.get(seleccion[0])
+        
+        confirmar = messagebox.askyesno(
+            "Confirmar Eliminación", 
+            f"¿Estás seguro de eliminar permanentemente la {nombre_hab}?"
+        )
+        
+        if confirmar:
+            try:
+                controller = HabitacionController()
+                controller.eliminar_habitacion(id_hab)
+                
+                messagebox.showinfo("Éxito", "Habitación eliminada correctamente.")
+                self.refrescar_lista_habitaciones()
+                
+                # Limpiar el detalle de la derecha si era la habitación seleccionada
+                for widget in self.caja_tabla.winfo_children():
+                    widget.destroy()
+                    
+            except Exception as e:
+                messagebox.showerror("Error Crítico", f"No se pudo eliminar: {e}")
+
+    def editar_habitacion(self):
+
+        seleccion = self.lista_habitaciones.curselection()
+        if not seleccion:
+            messagebox.showwarning("Aviso", "Selecciona una habitación de la lista para editar.")
+            return
+        
+        if self.lista_habitaciones.get(seleccion[0]) == "Sin habitaciones":
+            return
+
+        self.id_hab_edicion = self.ids_memoria[seleccion[0]]
+
+        controller = HabitacionController()
+        datos_actuales = controller.obtener_detalle_habitacion(self.id_hab_edicion)
+        
+        if not datos_actuales:
+            messagebox.showerror("Error", "No se encontraron los datos de esta habitación.")
+            return
+            
+        num_hab_actual = datos_actuales[0]
+        nombre_tipo_actual = datos_actuales[1]
+        piso_actual = datos_actuales[5]
+
+        self.ventana_editar = tk.Toplevel(self.root)
+        self.ventana_editar.title("Editar Habitación")
+        self.ventana_editar.geometry("500x500")
+        self.ventana_editar.resizable(False, False)
+        self.ventana_editar.configure(background="#F3DCAB")
+
+        tk.Label(
+            self.ventana_editar, text="EDITAR HABITACIÓN", bg="#F3DCAB", 
+            font=("Arial", 30, "bold"), pady=10
+        ).pack(fill="x", side=tk.TOP, pady=(0, 20))
+
+        # Piso 
+        tk.Label(self.ventana_editar, text="Número de Piso:", bg="#F3DCAB", font=("Arial", 25, "bold")).pack(anchor="w", padx=40)
+        self.var_piso_edicion = tk.StringVar(value=str(piso_actual))
+        self.num_piso_edicion = tk.Spinbox(self.ventana_editar, from_=1, to=50, textvariable=self.var_piso_edicion, font=("Arial", 22), bd=2, relief="solid")
+        self.num_piso_edicion.pack(fill="x", padx=40, pady=(0, 15))
+
+        # Numero 
+        tk.Label(self.ventana_editar, text="Número de Habitación:", bg="#F3DCAB", font=("Arial", 25, "bold")).pack(anchor="w", padx=40)
+        self.num_habitacion_edicion = tk.Entry(self.ventana_editar, font=("Arial", 22), bd=2, relief="solid")
+        self.num_habitacion_edicion.insert(0, str(num_hab_actual))
+        self.num_habitacion_edicion.pack(fill="x", padx=40, pady=(0, 15))
+
+        # Tipp habitacion
+        tk.Label(self.ventana_editar, text="Tipo de Habitación:", bg="#F3DCAB", font=("Arial", 25, "bold")).pack(anchor="w", padx=40)
+        self.tipo_habitacion_edicion = ttk.Combobox(self.ventana_editar, font=("Arial", 22), state="readonly")
+        self.tipo_habitacion_edicion.pack(fill="x", padx=40, pady=(0, 25))
+
+        # Cargar los tipos de habitacion desde la bd
+        self.datos_bd_tipos_edicion = controller.obtener_tipos_de_habitacion()
+        if self.datos_bd_tipos_edicion:
+            nombres_limpios = [fila[1] for fila in self.datos_bd_tipos_edicion]
+            self.tipo_habitacion_edicion['values'] = nombres_limpios
+            
+            if nombre_tipo_actual in nombres_limpios:
+                indice_actual = nombres_limpios.index(nombre_tipo_actual)
+                self.tipo_habitacion_edicion.current(indice_actual)
+            else:
+                self.tipo_habitacion_edicion.current(0)
+
+        # Boton para realizar el update
+        self.btn_actualizar_habitacion = tk.Button(
+            self.ventana_editar, text="Actualizar Habitación", bg="#1565C0", fg="white", 
+            font=("Arial", 22, "bold"), bd=2, relief="raised", command=self.ejecutar_edicion_habitacion
+        )
+        self.btn_actualizar_habitacion.pack(fill="x", padx=40)
+        
+        self.ventana_editar.grab_set()
+
+    def ejecutar_edicion_habitacion(self):
+
+        piso_nuevo = self.num_piso_edicion.get().strip()
+        numero_nuevo = self.num_habitacion_edicion.get().strip()
+        indice_seleccionado = self.tipo_habitacion_edicion.current()
+        
+        if not piso_nuevo or not numero_nuevo:
+            messagebox.showerror("Error", "Los campos Piso y Número son obligatorios")
+            return
+
+        if indice_seleccionado == -1: 
+            messagebox.showerror("Error", "Debe seleccionar un Tipo de Habitación válido")
+            return 
+            
+        id_tipo_sql_nuevo = self.datos_bd_tipos_edicion[indice_seleccionado][0] 
+        
+        controller = HabitacionController()
+        try:
+            controller.actualizar_habitacion(self.id_hab_edicion, piso_nuevo, numero_nuevo, id_tipo_sql_nuevo)
+            messagebox.showinfo("Éxito", "Habitación actualizada correctamente.")
+            
+            self.ventana_editar.destroy() 
+            self.refrescar_lista_habitaciones()
+            
+            for widget in self.caja_tabla.winfo_children():
+                widget.destroy()
+            
+        except ValueError as e:
+            messagebox.showerror("Datos Inválidos", str(e))
+        except Exception as e:
+            messagebox.showerror("Error Crítico de BD", str(e))
