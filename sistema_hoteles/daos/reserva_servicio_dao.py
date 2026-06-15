@@ -37,4 +37,10 @@ class ReservaServicioDAO(BaseDAO):
         
         valores = (id_reserva, )
 
-        return self.obtener_datos_por_id(consulta, valores)
+        return self.obtener_varios_datos_por_id(consulta, valores)
+    
+    def eliminar_consumo(self, id_cargo: int) -> None:
+
+        consulta = "DELETE FROM reserva_servicio WHERE id_cargo = %s;"
+
+        self.eliminar_dato_por_id(consulta, id_cargo)
