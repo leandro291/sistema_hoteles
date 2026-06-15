@@ -38,7 +38,54 @@ class ClienteDAO(BaseDAO):
             FROM cliente
         """
 
-        return self.obtener_datos(consulta)
+        return self.obtener_varios_datos(consulta)
+    
+    def contar_totaL_clientes(self) -> int:
+
+        consulta = """
+            SELECT  
+            COUNT(*) 
+            FROM cliente 
+        """
+
+        res = self.obtener_un_registro(consulta)
+        return res[0]
+    
+    def actualizar_datos_cliente(self, cliente: "Cliente"):
+
+        consulta = """
+            UPDATE cliente
+            SET 
+                nombre = %s, 
+                apellido = %s, 
+                tipo_documento = %s, 
+                num_documento = %s, 
+                telefono = %s, 
+                correo = %s, 
+                direccion = %s
+            WHERE id_cliente = %s;
+        """
+
+        valores = (
+            cliente.nombre,
+            cliente.apellido,
+            cliente.tipo_documento,
+            cliente.numero_documento,
+            cliente.telefono,
+            cliente.correo,
+            cliente.direccion,
+            cliente.id_cliente
+        )
+
+        self.actualizar_datos(consulta, valores)
+    
+    def eliminar_cliente(self, id_cliente: int):
+        
+        consulta = "DELETE FROM cliente WHERE id_cliente = %s;"
+        
+        self.eliminar_dato_por_id(consulta, id_cliente)
+    
+    
 
 
 
