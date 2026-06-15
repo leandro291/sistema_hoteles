@@ -7,7 +7,7 @@ def hashear_contrasena(contrasena: str) -> str:
 
     return hashed_contrasena.decode('utf-8')
 
-def validar_contrasena(contrasena_ingresada: str, hash_guardado) -> str:
+def validar_contrasena(contrasena_ingresada: str, hash_guardado) -> bool:
     bytes_contrasena = contrasena_ingresada.encode('utf-8')
     bytes_hash = hash_guardado.encode('utf-8')
 

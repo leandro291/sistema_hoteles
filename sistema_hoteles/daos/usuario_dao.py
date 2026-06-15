@@ -1,10 +1,11 @@
 from daos import BaseDAO
+from typing import Tuple, Any
 from models.usuario import Usuario
 
 
 class UsuarioDAO(BaseDAO):
     
-    def insertar_nuevo_usuario(self, usuario: "Usuario") -> None:
+    def insertar_nuevo_usuario(self, usuario: "Usuario") -> int:
 
         consulta = """
             INSERT INTO usuario (nombre_usuario, contrasena, rol)
@@ -20,7 +21,7 @@ class UsuarioDAO(BaseDAO):
 
         return self.insertar_datos(consulta, valores)
     
-    def obtener_usuario_por_nombre(self, nombre_usuario: str):
+    def obtener_usuario_por_nombre(self, nombre_usuario: str) -> Tuple[Any]:
 
         consulta = """
             SELECT id_usuario, contrasena, rol

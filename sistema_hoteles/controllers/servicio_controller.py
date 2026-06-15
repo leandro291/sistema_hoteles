@@ -1,6 +1,7 @@
 from config.database import ConexionDB
 from decimal import Decimal
 from pydantic import ValidationError
+from typing import Tuple, Any
 
 from models.servicio import Servicio, ServicioSchema
 from daos.servicio_dao import ServicioDAO
@@ -10,7 +11,7 @@ class ServicioController:
     def __init__(self):
         self.db = ConexionDB()
 
-    def registrar_nuevo_servicio(self, nombre: str, descripcion: str, precio: str):
+    def registrar_nuevo_servicio(self, nombre: str, descripcion: str, precio: str) -> int:
 
         precio_formateado = Decimal(precio)
 
@@ -42,7 +43,7 @@ class ServicioController:
         except Exception as e:
             raise Exception(f"Ha ocurrido un error en la BD: {e}")
 
-    def obtener_todos_los_servicios(self):
+    def obtener_todos_los_servicios(self) -> Tuple[Any]:
 
         conexion = self.db.obtener_conexion()
 
@@ -54,7 +55,7 @@ class ServicioController:
         except Exception as e:
             raise Exception(f"Ha ocurrido un error en la BD: {e}")
         
-    def obtener_todas_las_reservas_en_curso(self):
+    def obtener_todas_las_reservas_en_curso(self) -> Tuple[Any]:
 
         conexion = self.db.obtener_conexion()
 

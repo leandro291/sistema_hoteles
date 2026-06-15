@@ -1,3 +1,4 @@
+from typing import Tuple, Any
 from daos.base_dao import BaseDAO
 from models.cliente import Cliente
 
@@ -23,7 +24,7 @@ class ClienteDAO(BaseDAO):
 
         return self.insertar_datos(sql, valores)
     
-    def obtener_todos_los_clientes(self):
+    def obtener_todos_los_clientes(self) -> Tuple[Any]:
 
         consulta = """
             SELECT 
@@ -51,7 +52,7 @@ class ClienteDAO(BaseDAO):
         res = self.obtener_un_registro(consulta)
         return res[0]
     
-    def actualizar_datos_cliente(self, cliente: "Cliente"):
+    def actualizar_datos_cliente(self, cliente: "Cliente") -> None:
 
         consulta = """
             UPDATE cliente
@@ -79,7 +80,7 @@ class ClienteDAO(BaseDAO):
 
         self.actualizar_datos(consulta, valores)
     
-    def eliminar_cliente(self, id_cliente: int):
+    def eliminar_cliente(self, id_cliente: int) -> None:
         
         consulta = "DELETE FROM cliente WHERE id_cliente = %s;"
         

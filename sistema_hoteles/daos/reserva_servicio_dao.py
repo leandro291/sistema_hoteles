@@ -1,9 +1,10 @@
+from typing import Tuple, Any
 from daos.base_dao import BaseDAO
 from models.reserva_servicio import ReservaServicio
 
 class ReservaServicioDAO(BaseDAO):
 
-    def insertar_reserva_servicio(self, reserva_servicio: "ReservaServicio") -> bool:
+    def insertar_reserva_servicio(self, reserva_servicio: "ReservaServicio") -> int:
 
         consulta = """
             INSERT INTO reserva_servicio (id_servicio, id_reserva, precio_unitario, cantidad, subtotal)
@@ -21,7 +22,7 @@ class ReservaServicioDAO(BaseDAO):
 
         return self.insertar_datos(consulta, valores)
     
-    def obtener_consumos_por_reserva(self, id_reserva: int):
+    def obtener_consumos_por_reserva(self, id_reserva: int) -> Tuple[Any]:
 
         consulta = """
             SELECT 

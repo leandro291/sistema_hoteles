@@ -1,16 +1,16 @@
+from typing import Tuple, Any
+from pydantic import ValidationError
 from config.database import ConexionDB
 
-from pydantic import ValidationError
-
-from models.cliente import Cliente, ClienteSchema
 from daos.cliente_dao import ClienteDAO
+from models.cliente import Cliente, ClienteSchema
 
 class ClienteController:
     def __init__(self):
         self.db = ConexionDB()
 
     def registrar_usuario(self, nombre: str, apellido: str, tipo_doc: str, num_doc: str, telefono: str, 
-                        correo: str, direccion: str) -> None:
+                        correo: str, direccion: str) -> int:
         
         try:
             validador_cliente = ClienteSchema(
@@ -23,7 +23,7 @@ class ClienteController:
                 direccion=direccion
             )
         except ValidationError as e:
-            raise ValueError(f"Ha ocurrido un error al ingresar los datos: {e}")
+            raise ValueError(f"Ha ocurrido un error al registrar datos del cliente: {e}")
         
         cliente = Cliente(
             nombre=validador_cliente.nombre,
@@ -38,14 +38,12 @@ class ClienteController:
         conexion = self.db.obtener_conexion()
 
         try:
-
             dao_cliente = ClienteDAO(conexion)
             return dao_cliente.insertar_cliente(cliente)
-
         except Exception as e:
             raise Exception(f"Ha ocurrido un error al insertar clientes: {e}")
         
-    def obtener_todos_clientes(self):
+    def obtener_todos_clientes(self) -> Tuple[Any]:
         
         conexion = self.db.obtener_conexion()
 
@@ -56,7 +54,7 @@ class ClienteController:
             raise Exception(f"Ha ocurrido un error al obtener los datos del cliente: {e}")
         
     def actualizar_cliente(self, id_cliente: int, nombre: str, apellido: str, tipo_doc: str, num_doc: str,
-                        telefono: str, correo: str, direccion: str):
+                        telefono: str, correo: str, direccion: str) -> None:
         
         conexion = self.db.obtener_conexion()
 
@@ -85,33 +83,27 @@ class ClienteController:
         )
 
         try:
-
             dao_cliente = ClienteDAO(conexion)
             dao_cliente.actualizar_datos_cliente(cliente_actualizado)
-
         except Exception as e:
-            raise Exception(f"Ha ocurrido un error al actualizar un cliente: {e}")
+            raise Exception(f"Ha ocurrido un error al actualizar los datos del cliente: {e}")
         
     def eliminar_cliente(self, id_cliente: int) -> None:
 
         conexion = self.db.obtener_conexion()
 
         try:
-
             dao_cliente = ClienteDAO(conexion)
             dao_cliente.eliminar_cliente(id_cliente)
-
         except Exception as e:
             raise Exception(f"Ha ocurrido un error al eliminar un cliente: {e}")
         
-    def contar_total_clientes(self):
+    def contar_total_clientes(self) -> int:
 
         conexion = self.db.obtener_conexion()
 
         try:
-
             dao_cliente = ClienteDAO(conexion)
             return dao_cliente.contar_totaL_clientes()
-
         except Exception as e:
             raise Exception(f"Ha ocurrido un error al eliminar un cliente: {e}")

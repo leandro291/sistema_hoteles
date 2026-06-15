@@ -1,4 +1,4 @@
-from typing import List, Tuple, Any
+from typing import Tuple, Any
 
 class BaseDAO:
     def __init__(self, conexion):
@@ -12,6 +12,7 @@ class BaseDAO:
             id_obtenido = cursor.fetchone()[0]
 
             return id_obtenido
+        
         except Exception as e:
             self.conexion.rollback()
             raise Exception(f"Error al insertar en la Base de Datos: {e}")
@@ -19,7 +20,7 @@ class BaseDAO:
             if cursor:
                 cursor.close()
 
-    def obtener_un_registro(self, sql: str, valores: Tuple[Any] = None) -> List:
+    def obtener_un_registro(self, sql: str, valores: Tuple[Any] = None) -> Tuple[Any]:
         cursor = self.conexion.cursor()
         try:
             if valores:
@@ -33,7 +34,7 @@ class BaseDAO:
             if cursor:
                 cursor.close()
 
-    def obtener_varios_datos(self, sql: str, valores: Tuple[Any] = None) -> List:
+    def obtener_varios_datos(self, sql: str, valores: Tuple[Any] = None) -> Tuple[Any]:
         cursor = self.conexion.cursor()
         try:
             if valores:
@@ -50,7 +51,7 @@ class BaseDAO:
     def obtener_un_dato_por_id(self, sql: str, id_obtenido: int) -> Tuple[Any]:
         return self.obtener_un_registro(sql, (id_obtenido,))
                 
-    def obtener_varios_datos_por_id(self, sql: str, id_obtenido: int) -> List:
+    def obtener_varios_datos_por_id(self, sql: str, id_obtenido: int) -> Tuple[Any]:
 
         return self.obtener_varios_datos(sql, (id_obtenido,))
 
@@ -87,7 +88,7 @@ class BaseDAO:
             if cursor:
                 cursor.close()
 
-    def cambiar_estado(self, sql: str, valores: Tuple[Any]) -> bool:
+    def cambiar_estado(self, sql: str, valores: Tuple[Any]) -> None:
         cursor = self.conexion.cursor()
         try:
             cursor.execute(sql, valores)
@@ -95,8 +96,7 @@ class BaseDAO:
             
             if cursor.rowcount == 0:
                 raise Exception("No se pudo completar el cambio de estado")
-                
-            return True
+            
         except Exception as e:
             self.conexion.rollback()
             raise Exception(f"Error al cambiar estado: {e}")

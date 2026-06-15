@@ -1,15 +1,17 @@
-from config.database import ConexionDB
 from pydantic import ValidationError
+from config.database import ConexionDB
+from typing import Dict
 
-from models import Usuario, UsuarioSchema
 from daos.usuario_dao import UsuarioDAO
+from models import Usuario, UsuarioSchema
+
 from utils.security import hashear_contrasena, validar_contrasena
 
 class AuthController:
     def __init__(self):
         self.db = ConexionDB()
 
-    def registrar_nuevo_usuario(self, nombre: str, contrasena: str, rol: str) -> None:
+    def registrar_nuevo_usuario(self, nombre: str, contrasena: str, rol: str) -> int:
         
         try:
             validador_usuario = UsuarioSchema(
@@ -29,19 +31,16 @@ class AuthController:
         conexion = self.db.obtener_conexion()
 
         try:
-
             dao_usuario = UsuarioDAO(conexion)
             return dao_usuario.insertar_nuevo_usuario(usuario)
-        
         except Exception as e:
             raise Exception(f"Ha ocurrido un error en la Base de Datos: {e}")
         
-    def iniciar_sesion(self, nombre_ingresado: str, contrasena_ingresada: str):
+    def iniciar_sesion(self, nombre_ingresado: str, contrasena_ingresada: str) -> Dict[str]:
         
         conexion = self.db.obtener_conexion()
 
         try:
-            
             dao_usuario = UsuarioDAO(conexion)
             datos = dao_usuario.obtener_usuario_por_nombre(nombre_ingresado)
 
@@ -58,6 +57,6 @@ class AuthController:
                 "nombre_usuario": nombre_ingresado,
                 "rol" : rol
             }
-
+        
         except Exception as e:
             raise Exception(f"Ha ocurrido un error en la Base de Datos: {e}")

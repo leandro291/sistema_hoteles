@@ -18,7 +18,7 @@ class RecepcionController:
     def __init__(self):
         self.db = ConexionDB()
 
-    def registrar_check_in(self, id_cliente: int, datos_reserva: dict, id_usuario: int, selecciones: list):
+    def registrar_check_in(self, id_cliente: int, datos_reserva: Dict[str], id_usuario: int, selecciones: List[Dict[str]]) -> None:
         
         try:
             fecha_entrada = datetime.strptime(datos_reserva["fecha_entrada"], "%Y-%m-%d")
@@ -75,7 +75,6 @@ class RecepcionController:
                 if total_personas > capacidad_maxima:
                         raise ValueError(f"Intento de vulneración de capacidad: Se intentó registrar {total_personas} personas en un cuarto de capacidad {capacidad_maxima}.")
 
-
                 precio_por_noche = dao_habitacion.obtener_precio_por_habitacion(id_habitacion_actual)
                 if precio_por_noche is None or precio_por_noche <= 0:
                     raise ValueError("Error al obtener la tarifa de la habitación desde la base de datos.")
@@ -119,9 +118,9 @@ class RecepcionController:
                         id_reserva_habitacion=id_generado_reserva_habitacion
                     )
 
-                    dao_acompanante.insertar_acompanante(acompanante)
+                    return dao_acompanante.insertar_acompanante(acompanante)
 
         except Exception as e:
-            raise Exception(f"2Ha ocurrido un error en la base de datos: {e}")
+            raise Exception(f"Ha ocurrido un error en la base de datos: {e}")
                 
 

@@ -1,3 +1,4 @@
+from typing import Tuple, Any
 from daos.base_dao import BaseDAO
 from models.tipo_habitacion import TipoHabitacion
 
@@ -20,14 +21,14 @@ class TipoHabitacionDAO(BaseDAO):
 
         return self.insertar_datos(consulta, valores)
     
-    def obtener_todos_los_tipos(self) -> None:
+    def obtener_todos_los_tipos(self) -> Tuple[Any]:
         
         consulta = """
             SELECT id_tipo_habitacion, nombre
             FROM tipo_habitacion
         """
 
-        return self.obtener_datos(consulta)
+        return self.obtener_varios_datos(consulta)
     
 
 

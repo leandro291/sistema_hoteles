@@ -1,3 +1,4 @@
+from typing import Tuple, Any
 from daos.base_dao import BaseDAO
 from models.habitacion import Habitacion
 
@@ -20,7 +21,7 @@ class HabitacionDAO(BaseDAO):
 
         return self.insertar_datos(consulta, valores)
     
-    def obtener_detalles_por_habitacion(self, id_habitacion: int):
+    def obtener_detalles_por_habitacion(self, id_habitacion: int) -> Tuple[Any]:
         
         consulta = """
 
@@ -37,17 +38,20 @@ class HabitacionDAO(BaseDAO):
 
         """
 
-        return self.obtener_dato_por_id(consulta, id_habitacion)
+        return self.obtener_un_dato_por_id(consulta, id_habitacion)
     
-    def obtener_todas_las_habitaciones(self):
+    def obtener_todas_las_habitaciones(self) -> Tuple[Any]:
 
         consulta = """
-            SELECT id_habitacion, num_habitacion FROM habitacion;
+            SELECT 
+                id_habitacion, 
+                num_habitacion 
+            FROM habitacion;
         """
 
-        return self.obtener_datos(consulta)
+        return self.obtener_varios_datos(consulta)
     
-    def obtener_habitaciones_disponibles(self):
+    def obtener_habitaciones_disponibles(self) -> Tuple[Any]:
 
         consulta = """
             SELECT 
@@ -59,9 +63,9 @@ class HabitacionDAO(BaseDAO):
             WHERE h.estado = 'Disponible';
         """
 
-        return self.obtener_datos(consulta)
+        return self.obtener_varios_datos(consulta)
 
-    def cambiar_estado_habitacion(self, id_habitacion: int, nuevo_estado: str) -> bool:
+    def cambiar_estado_habitacion(self, id_habitacion: int, nuevo_estado: str) -> None:
         
         consulta = """
             UPDATE 
@@ -85,7 +89,7 @@ class HabitacionDAO(BaseDAO):
 
         valores = (id_habitacion, )
 
-        resultado = self.obtener_dato_por_id(consulta, valores)
+        resultado = self.obtener_un_dato_por_id(consulta, valores)
         
         if resultado:
             return float(resultado[0]) 
@@ -101,9 +105,75 @@ class HabitacionDAO(BaseDAO):
         """
 
         valores = (id_habitacion, )
-        resultado = self.obtener_dato_por_id(consulta, valores)
+        resultado = self.obtener_un_dato_por_id(consulta, valores)
         
         
         if resultado:
             return int(resultado[0]) 
         return 0
+    
+    def contar_totaL_habitaciones(self) -> int:
+
+        consulta = """
+            SELECT  
+            COUNT(*) 
+            FROM habitacion 
+        """
+
+        res = self.obtener_un_registro(consulta)
+        return res[0]
+    
+    def contar_habitaciones_disponibles(self) -> int:
+
+        consulta = """
+            SELECT  
+            COUNT(*) 
+            FROM habitacion 
+            WHERE estado = 'Disponible';
+        """
+
+        res = self.obtener_un_registro(consulta)
+        return res[0]
+    
+    def contar_habitaciones_ocupadas(self) -> int:
+
+        consulta = """
+            SELECT  
+            COUNT(*) 
+            FROM habitacion 
+            WHERE estado = 'Ocupado';
+        """
+
+        res = self.obtener_un_registro(consulta)
+        return res[0]
+    
+    def eliminar_habitacion(self, id_habitacion: int) -> None:
+
+        consulta = """
+            DELETE FROM habitacion
+            WHERE id_habitacion = %s
+        """
+
+        valores = (id_habitacion, )
+
+        self.eliminar_dato_por_id(consulta, valores)
+
+    def actualizar_habitacion(self, habitacion : "Habitacion") -> None:
+
+        consulta = """
+        UPDATE habitacion 
+        SET 
+            num_piso = %s,
+            num_habitacion = %s,
+            id_tipo_habitacion = %s
+        WHERE id_habitacion = %s
+        """
+
+        valores = (
+            habitacion.numero_piso,
+            habitacion.numero_habitacion,
+            habitacion.id_tipo_habitacion,
+            habitacion.id_habitacion
+        )
+
+        self.actualizar_datos(consulta, valores)

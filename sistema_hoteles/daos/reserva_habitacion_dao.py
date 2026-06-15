@@ -3,7 +3,7 @@ from models.reserva_habitacion import ReservaHabitacion
 
 class ReservaHabitacionDAO(BaseDAO):
 
-    def insertar_reserva_habitacion(self, reserva_habitacion: "ReservaHabitacion") -> bool:
+    def insertar_reserva_habitacion(self, reserva_habitacion: "ReservaHabitacion") -> int:
         
         consulta = """
             INSERT INTO reserva_habitacion (id_habitacion, id_reserva, precio_x_noche, es_titular, subtotal)

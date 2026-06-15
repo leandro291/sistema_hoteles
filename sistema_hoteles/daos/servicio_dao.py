@@ -1,3 +1,4 @@
+from typing import Tuple, Any
 from daos.base_dao import BaseDAO
 from models.servicio import Servicio
 
@@ -19,7 +20,7 @@ class ServicioDAO(BaseDAO):
 
         return self.insertar_datos(consulta, valores)
     
-    def obtener_todos_los_servicios(self):
+    def obtener_todos_los_servicios(self) -> Tuple[Any]:
 
         consulta = """
             SELECT 
@@ -30,7 +31,7 @@ class ServicioDAO(BaseDAO):
             FROM servicio
         """
 
-        return self.obtener_datos(consulta)
+        return self.obtener_varios_datos(consulta)
     
     def obtener_precio_por_id(self, id_servicio: int) -> int:
 
@@ -42,7 +43,7 @@ class ServicioDAO(BaseDAO):
         
         valores = (id_servicio,)
 
-        resultado = self.obtener_dato_por_id(consulta, valores)
+        resultado = self.obtener_un_dato_por_id(consulta, valores)
 
         if resultado:
             return float(resultado[0])

@@ -1,4 +1,5 @@
 from config.database import ConexionDB
+from typing import Tuple, Any
 
 from models.reserva_servicio import ReservaServicio
 
@@ -9,7 +10,7 @@ class ConsumoController:
     def __init__(self):
         self.db = ConexionDB()
 
-    def registrar_servicio(self, id_servicio: int, id_reserva: int, cantidad: int ) -> None:
+    def registrar_servicio(self, id_servicio: int, id_reserva: int, cantidad: int ) -> int:
 
         if cantidad <= 0:
             raise Exception("La cantidad ingresada no puede ser menor o igual a 0")
@@ -42,7 +43,7 @@ class ConsumoController:
         except Exception as e:
             raise Exception(f"Ha ocurrido un error en la base de datos: {e}")
                 
-    def obtener_historial_consumos(self, id_reserva: int):
+    def obtener_historial_consumos(self, id_reserva: int) -> Tuple[Any]:
 
         conexion = self.db.obtener_conexion()
 
