@@ -1,11 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
+from datetime import date
 from tkinter import messagebox
+from tkcalendar import DateEntry
 
-from models.reserva import Reserva
-from models.acompanante import Acompanante
-from controllers.recepcion_controller import RecepcionController
 from controllers.cliente_controller import ClienteController
+from controllers.recepcion_controller import RecepcionController
 from controllers.habitacion_controller import HabitacionController
 
 class AsignacionView:
@@ -26,7 +26,8 @@ class AsignacionView:
         self.cargar_combobox_habitaciones()
 
     def configurar_interfaz(self):
-        # --- HEADER ---
+
+        # --- Cabecera del sistema ---
         self.frame_header = tk.Frame(self.root, background="#E0E0E0", bd=2, relief="groove")
         self.frame_header.pack(side=tk.TOP, fill="x")
 
@@ -41,13 +42,14 @@ class AsignacionView:
             font=("Arial", 28, "bold"), fg="#333333"
         ).pack(side=tk.LEFT, padx=20, pady=15)
 
-        # --- CONTENEDOR PRINCIPAL (2 COLUMNAS) ---
+        # --- Contenedor principal (2 columnas) ---
+
         self.frame_main = tk.Frame(self.root, background="#F3DCAB")
         self.frame_main.pack(fill="both", expand=True, padx=20, pady=20)
 
-        # =====================================================================
-        # COLUMNA IZQUIERDA: DATOS DE RESERVA
-        # =====================================================================
+
+        # Columna izquierda
+
         self.panel_izquierda = tk.LabelFrame(
             self.frame_main, text=" Datos del Check-In ", font=("Arial", 20, "bold"), 
             background="#F3DCAB", fg="#00838F", bd=2, relief="solid"
@@ -58,27 +60,25 @@ class AsignacionView:
         self.lista_clientes = ttk.Combobox(self.panel_izquierda, font=("Arial", 16), state="readonly", width=25)
         self.lista_clientes.pack(padx=15, pady=(0, 15))
 
-        tk.Label(self.panel_izquierda, text="Seleccionar Habitación:", bg="#F3DCAB", fg="#00838F", font=("Arial", 16, "bold")).pack(anchor="w", padx=15, pady=(5, 2))
+        tk.Label(self.panel_izquierda, text="Seleccionar habitacion:", bg="#F3DCAB", fg="#00838F", font=("Arial", 16, "bold")).pack(anchor="w", padx=15, pady=(5, 2))
         self.lista_habitaciones = ttk.Combobox(self.panel_izquierda, font=("Arial", 16), state="readonly", width=25)
         self.lista_habitaciones.pack(padx=15, pady=(0, 5))
         
         self.lista_habitaciones.bind("<<ComboboxSelected>>", self.actualizar_capacidad_visual)
 
-        self.lbl_capacidad = tk.Label(
+        self.capacidad = tk.Label(
             self.panel_izquierda, text="Capacidad: Seleccione un cuarto", 
             bg="#FFF3CD", fg="#856404", font=("Arial", 12, "bold"), relief="solid", bd=1
         )
-        self.lbl_capacidad.pack(fill="x", padx=15, pady=(0, 15), ipadx=5, ipady=5)
+        self.capacidad.pack(fill="x", padx=15, pady=(0, 15), ipadx=5, ipady=5)
 
         tk.Label(self.panel_izquierda, text="Fecha Ingreso:", bg="#F3DCAB", fg="#00838F", font=("Arial", 16, "bold")).pack(anchor="w", padx=15, pady=(5, 2))
-        self.ingreso = tk.Entry(self.panel_izquierda, font=("Arial", 16), width=26, bd=1, relief="solid")
+        self.ingreso = DateEntry(self.panel_izquierda, font=("Arial", 16), width=24, date_pattern='yyyy-mm-dd')
         self.ingreso.pack(padx=15, pady=(0, 15))
-        self.ingreso.insert(0, "YYYY-MM-DD")
 
         tk.Label(self.panel_izquierda, text="Fecha Salida:", bg="#F3DCAB", fg="#00838F", font=("Arial", 16, "bold")).pack(anchor="w", padx=15, pady=(5, 2))
-        self.salida = tk.Entry(self.panel_izquierda, font=("Arial", 16), width=26, bd=1, relief="solid")
+        self.salida = DateEntry(self.panel_izquierda, font=("Arial", 16), width=24, date_pattern='yyyy-mm-dd')
         self.salida.pack(padx=15, pady=(0, 20))
-        self.salida.insert(0, "YYYY-MM-DD")
 
         self.btn_guardar = tk.Button(
             self.panel_izquierda, text="Confirmar y Guardar", font=("Arial", 18, "bold"), 
@@ -86,9 +86,8 @@ class AsignacionView:
         )
         self.btn_guardar.pack(fill="x", side=tk.BOTTOM, padx=15, pady=15, ipady=5)
 
-        # =====================================================================
-        # COLUMNA DERECHA: GESTIÓN INTELIGENTE DE ACOMPAÑANTES
-        # =====================================================================
+        # Columna derecha
+
         self.panel_derecha = tk.LabelFrame(
             self.frame_main, text=" Registro de Acompañantes ", font=("Arial", 20, "bold"), 
             background="#F3DCAB", fg="#00838F", bd=2, relief="solid"
@@ -120,10 +119,11 @@ class AsignacionView:
         )
         self.btn_agregar.grid(row=1, column=4, padx=15, pady=(0,15), sticky="we")
 
-        # Tabla
+        # Configuración del estilo de la tabla
+
         estilo = ttk.Style()
-        estilo.configure("Treeview.Heading", font=("Arial", 12, "bold"))
-        estilo.configure("Treeview", font=("Arial", 12), rowheight=30)
+        estilo.configure("Treeview.Heading", font=("Arial", 18, "bold"))
+        estilo.configure("Treeview", font=("Arial", 16), rowheight=30)
 
         columnas = ("Nombre", "Apellido", "Documento", "Teléfono")
         self.tabla_acompanantes = ttk.Treeview(self.panel_derecha, columns=columnas, show="headings", height=10)
@@ -131,14 +131,13 @@ class AsignacionView:
 
         for col in columnas:
             self.tabla_acompanantes.heading(col, text=col)
-            self.tabla_acompanantes.column(col, width=120)
+            self.tabla_acompanantes.column(col, width=120, anchor="center")
 
         self.btn_quitar = tk.Button(
-            self.panel_derecha, text="🗑️ Eliminar Seleccionado", font=("Arial", 14, "bold"), 
+            self.panel_derecha, text="Eliminar Seleccionado", font=("Arial", 14, "bold"), 
             bg="#D32F2F", fg="white", command=self.quitar_acompanante_lista
         )
         self.btn_quitar.pack(side=tk.RIGHT, padx=15, pady=15)
-
 
     # Logica de control y eventos
 
@@ -167,18 +166,17 @@ class AsignacionView:
         self.datos_habitaciones.clear()
 
         controller = HabitacionController()
-        
         bd_habitaciones = controller.obtener_habitaciones_disponibles()
         
         if not bd_habitaciones:
             self.lista_habitaciones['values'] = ["Sin cuartos libres"]
-            self.lbl_capacidad.config(text="No hay disponibilidad", bg="#F8D7DA", fg="#721C24")
+            self.capacidad.config(text="No hay disponibilidad", bg="#F8D7DA", fg="#721C24")
             return
 
         visual = []
         for habitacion in bd_habitaciones:
             self.datos_habitaciones.append({"id": habitacion[0], "numero": habitacion[1], "capacidad": habitacion[2]})
-            visual.append(f"Habitación {habitacion[1]} (Cap: {habitacion[2]})")
+            visual.append(f"habitacion {habitacion[1]} (Cap: {habitacion[2]})")
 
         self.lista_habitaciones['values'] = visual
         self.lista_habitaciones.current(0)
@@ -193,18 +191,21 @@ class AsignacionView:
         hab_seleccionada = self.datos_habitaciones[idx]
         self.capacidad_actual_seleccionada = hab_seleccionada["capacidad"]
         
-        max_acompanantes = self.capacidad_actual_seleccionada - 1 
-        
-        texto = f"Capacidad Total: {self.capacidad_actual_seleccionada} personas. (Máximo {max_acompanantes} acompañantes)"
-        self.lbl_capacidad.config(text=texto, bg="#D4EDDA", fg="#155724")
+        texto = f"Capacidad Total: {self.capacidad_actual_seleccionada} personas"
+        self.capacidad.config(text=texto, bg="#D4EDDA", fg="#155724")
 
     def agregar_acompanante_lista(self):
+
+        if not self.datos_habitaciones or self.capacidad_actual_seleccionada == 0:
+            messagebox.showwarning("Aviso", "Seleccione una habitacion disponible antes de añadir acompañantes.")
+            return
+
         max_acompanantes_permitidos = self.capacidad_actual_seleccionada - 1
         
         if len(self.lista_acompanantes_memoria) >= max_acompanantes_permitidos:
             messagebox.showerror(
                 "Límite Excedido", 
-                f"La habitación seleccionada solo permite {max_acompanantes_permitidos} acompañantes extra.\nEl titular ocupa 1 espacio."
+                f"La habitacion seleccionada solo permite {max_acompanantes_permitidos} acompañantes extra.\nEl titular ocupa 1 espacio."
             )
             return
 
@@ -245,9 +246,16 @@ class AsignacionView:
 
     def ejecutar_transaccion(self):
         id_cliente = self.lista_clientes.current()
-        id_habitacion = self.lista_habitaciones.current()
         
-        if id_cliente == -1 or id_habitacion == -1: 
+        id_habitacion = self.lista_habitaciones.current()
+        if id_habitacion == -1 or self.lista_habitaciones.get() == "Sin cuartos libres": 
+            messagebox.showwarning("Aviso", "Debe seleccionar una habitacion disponible.}")
+            return
+        
+        usuario = self.manager.usuario_actual['id_usuario']
+
+        if usuario is None:
+            messagebox.showerror("Error de Sesion", "No se ha iniciado sesion correctamente")
             return
             
         id_cliente_bd = self.ids_clientes_memoria[id_cliente]
@@ -273,7 +281,7 @@ class AsignacionView:
             controller.registrar_check_in(
                 id_cliente=id_cliente_bd, 
                 datos_reserva=datos_reserva, 
-                id_usuario=2, 
+                id_usuario=usuario, 
                 selecciones=selecciones
             )
 
@@ -285,11 +293,15 @@ class AsignacionView:
             messagebox.showerror(f"Error Crítico de BD", e)
 
     def limpiar_formulario(self):
-        self.ingreso.delete(0, tk.END); self.ingreso.insert(0, "YYYY-MM-DD")
-        self.salida.delete(0, tk.END); self.salida.insert(0, "YYYY-MM-DD")
+        
+        hoy = date.today()
+        self.ingreso.set_date(hoy)
+        self.salida.set_date(hoy)
+        
         self.lista_acompanantes_memoria.clear()
 
         for item in self.tabla_acompanantes.get_children(): 
             self.tabla_acompanantes.delete(item)
 
         self.cargar_combobox_habitaciones()
+        self.cargar_combobox_clientes()
