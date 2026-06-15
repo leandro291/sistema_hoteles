@@ -19,7 +19,6 @@ class ConsumoController:
         try:
 
             dao_servicio = ServicioDAO(conexion)
-
             precio_servicio = dao_servicio.obtener_precio_por_id(id_servicio)
 
             if precio_servicio is None:
@@ -49,8 +48,18 @@ class ConsumoController:
 
         try:
             dao_rs = ReservaServicioDAO(conexion) 
-            
             return dao_rs.obtener_consumos_por_reserva(id_reserva)
+            
+        except Exception as e:
+            raise Exception(f"Fallo al leer historial de BD: {e}")
+
+    def eliminar_consumo(self, id_cargo: int) -> None:
+
+        conexion = self.db.obtener_conexion()
+
+        try:
+            dao_rs = ReservaServicioDAO(conexion)
+            dao_rs.eliminar_consumo(id_cargo)
             
         except Exception as e:
             raise Exception(f"Fallo al leer historial de BD: {e}")
