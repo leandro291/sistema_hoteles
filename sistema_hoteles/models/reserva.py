@@ -1,6 +1,4 @@
-from typing import List
 from datetime import date
-from decimal import Decimal
 from pydantic import BaseModel
 
 class ReservaSchema(BaseModel):
