@@ -215,8 +215,6 @@ class ServiciosView:
 
             bd_reservas = controller.obtener_todas_las_reservas_en_curso()
 
-            print(bd_reservas)
-
             if not bd_reservas:
                 self.lista_reservas['values'] = ["No hay reservas en curso"]
                 self.lista_reservas.current(0)
@@ -225,10 +223,8 @@ class ServiciosView:
             visual = []
             for fila in bd_reservas:
                 
-                # Guardamos el ID real en la RAM
                 self.ids_reservas_memoria.append(fila[0])
                 
-                # Armamos el texto amigable para el Combobox
                 texto_amigable = f"Hab. {fila[1]} - {fila[2]} {fila[3]}"
                 visual.append(texto_amigable)
 
@@ -341,40 +337,43 @@ class ServiciosView:
             messagebox.showerror("Error de Carga", f"Fallo al traer los detalles de consumo: {e}")
 
     def ejecutar_transaccion(self):
-        # 1. Saber qué seleccionó el recepcionista visualmente
         idx_reserva = self.lista_reservas.current()
         idx_servicio = self.lista_servicios.current()
         
-        # Validar que no le den al botón verde sin haber elegido opciones
-        if idx_reserva == -1 or idx_servicio == -1:
-            messagebox.showwarning("Aviso", "Debe seleccionar una reserva activa y un servicio del catálogo.")
+        if idx_reserva == -1 or not self.ids_reservas_memoria:
+            messagebox.showwarning("Aviso", "Debe tener al menos una reserva activa seleccionada.")
+            return
+            
+        if idx_servicio == -1 or not self.datos_servicios_memoria:
+            messagebox.showwarning("Aviso", "Debe seleccionar un servicio válido del catálogo.")
             return
             
         try:
-            # 2. Extraer la cantidad directo del Spinbox (ya que usaste bind)
             cantidad = int(self.spin_cantidad.get())
+            if cantidad < 1:
+                raise ValueError("La cantidad debe ser 1 o mayor.")
 
-            # 3. Extraer los IDs REALES de nuestra memoria RAM
+            # Extracción segura
             id_reserva_real = self.ids_reservas_memoria[idx_reserva]
             id_servicio_real = self.datos_servicios_memoria[idx_servicio]["id"]
             
-            # 4. Llamar al ConsumoController
             controller = ConsumoController()
-            
-            # El controlador calcula el subtotal y guarda en SQL Server
             id_generado = controller.registrar_servicio(
                 id_servicio=id_servicio_real, 
                 id_reserva=id_reserva_real, 
                 cantidad=cantidad
             )
             
-            # 5. Feedback visual
             messagebox.showinfo("Éxito", f"Cargo registrado correctamente. (Ticket ID: {id_generado})")
             
-            # Reiniciamos el formulario
             self.spin_cantidad.set(1)
             self.calcular_subtotal_vivo() 
             self.cargar_consumos_de_reserva() 
+            
+        except ValueError as ve:
+            messagebox.showerror("Error", str(ve))
+        except Exception as e:
+            messagebox.showerror("Error de BD", str(e))
             
         except ValueError:
             messagebox.showerror("Error", "La cantidad debe ser un número entero válido.")
@@ -384,9 +383,21 @@ class ServiciosView:
     def anular_cargo(self):
         seleccionado = self.tabla_consumos.selection()
         if not seleccionado: 
+            messagebox.showwarning("Aviso", "Seleccione un cargo de la tabla para anularlo.")
             return
         
-        # Confirmación de seguridad
-        if messagebox.askyesno("Confirmar", "¿Está seguro que desea anular este cargo?"):
-            item_id = seleccionado[0]
-            self.tabla_consumos.delete(item_id)
+        valores = self.tabla_consumos.item(seleccionado[0])['values']
+        id_cargo_real = valores[0]
+        nombre_servicio = valores[1]
+
+        if messagebox.askyesno("Confirmar Anulación", f"¿Está seguro de anular el cargo por '{nombre_servicio}'?"):
+            try:
+                controller = ConsumoController()
+                controller.eliminar_consumo(id_cargo_real)
+                
+                messagebox.showinfo("Éxito", "Cargo anulado correctamente.")
+                
+                self.cargar_consumos_de_reserva()
+                
+            except Exception as e:
+                messagebox.showerror("Error de BD", f"No se pudo anular el cargo en la base de datos:\n{e}")
