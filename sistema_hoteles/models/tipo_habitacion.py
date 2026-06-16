@@ -5,7 +5,7 @@ from typing import List
 class TipoHabitacionSchema(BaseModel):
     nombre: str
     precio: Decimal = Field(gt=0)
-    capacidad: int = Field(gt=1)
+    capacidad: int = Field(gt=0)
     descripcion: str
 
 class TipoHabitacion:
