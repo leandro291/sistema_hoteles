@@ -54,13 +54,13 @@ class ConsumoController:
         except Exception as e:
             raise Exception(f"Fallo al leer historial de BD: {e}")
 
-    def eliminar_consumo(self, id_cargo: int) -> None:
+    def eliminar_consumo(self, id_reserva_servicio: int) -> None:
 
         conexion = self.db.obtener_conexion()
 
         try:
             dao_rs = ReservaServicioDAO(conexion)
-            dao_rs.eliminar_consumo(id_cargo)
+            dao_rs.eliminar_consumo(id_reserva_servicio)
             
         except Exception as e:
             raise Exception(f"Fallo al leer historial de BD: {e}")

@@ -117,7 +117,7 @@ class HabitacionController:
         try:
 
             dao_habitacion = HabitacionDAO(conexion)
-            return dao_habitacion.contar_totaL_habitaciones()
+            return dao_habitacion.contar_total_habitaciones()
 
         except Exception as e:
             raise Exception(f"Ha ocurrido un error en la base de datos: {e}")

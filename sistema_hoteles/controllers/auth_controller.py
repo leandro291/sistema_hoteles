@@ -1,6 +1,6 @@
+from typing import Dict
 from pydantic import ValidationError
 from config.database import ConexionDB
-from typing import Dict
 
 from daos.usuario_dao import UsuarioDAO
 from models import Usuario, UsuarioSchema
@@ -20,7 +20,7 @@ class AuthController:
                 rol=rol
             )   
         except ValidationError as e:
-            raise ValueError("Por favor, revisa que los datos ingreados sean correctos")
+            raise ValueError("Por favor, revisa que los datos ingresados sean correctos")
         
         usuario = Usuario(
             nombre=validador_usuario.nombre,
@@ -45,18 +45,19 @@ class AuthController:
             datos = dao_usuario.obtener_usuario_por_nombre(nombre_ingresado)
 
             if not datos:
-                raise ValueError("El nombre o la contraseña es erroneo")
+                raise ValueError("El nombre o la contraseña es erróneo")
             
             id_usuario, contrasena, rol = datos
 
             if not validar_contrasena(contrasena_ingresada, contrasena):
-                raise ValueError("El nombre o la contraseña es erroneo")
+                raise ValueError("El nombre o la contraseña es erróneo")
             
             return {
                 "id_usuario": id_usuario,
                 "nombre_usuario": nombre_ingresado,
                 "rol" : rol
             }
-        
+        except ValueError as e:
+            raise ValueError("Ha ocurrido un error al validar su contraseña o usuario")
         except Exception as e:
             raise Exception(f"Ha ocurrido un error en la Base de Datos: {e}")

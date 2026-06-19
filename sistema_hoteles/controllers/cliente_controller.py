@@ -9,7 +9,7 @@ class ClienteController:
     def __init__(self):
         self.db = ConexionDB()
 
-    def registrar_usuario(self, nombre: str, apellido: str, tipo_doc: str, num_doc: str, telefono: str, 
+    def registrar_cliente(self, nombre: str, apellido: str, tipo_doc: str, num_doc: str, telefono: str, 
                         correo: str, direccion: str) -> int:
         
         try:
@@ -104,6 +104,6 @@ class ClienteController:
 
         try:
             dao_cliente = ClienteDAO(conexion)
-            return dao_cliente.contar_totaL_clientes()
+            return dao_cliente.contar_total_clientes()
         except Exception as e:
-            raise Exception(f"Ha ocurrido un error al eliminar un cliente: {e}")
+            raise Exception(f"Ha ocurrido un error al contar los clientes: {e}")

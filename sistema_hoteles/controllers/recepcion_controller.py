@@ -53,17 +53,18 @@ class RecepcionController:
             dao_reserva = ReservaDAO(conexion)
             id_obtenido_reserva = dao_reserva.insertar_reserva(reserva)
         except Exception as e:
-            raise Exception(f"1Ha ocurrido un error en la base de datos: {e}")
+            raise Exception(f"Ha ocurrido un error en la base de datos: {e}")
 
         try:
-            
+            dao_habitacion = HabitacionDAO(conexion)
+            dao_reserva_habitacion = ReservaHabitacionDAO(conexion)
+            dao_acompanante = AcompananteDAO(conexion)
+
             for seleccion in selecciones:
 
                 id_habitacion_actual = seleccion["id_habitacion"]
                 tiene_titular = seleccion["tiene_titular"]
                 acompanantes_crudos = seleccion.get("acompanantes", [])
-
-                dao_habitacion = HabitacionDAO(conexion)
         
                 capacidad_maxima = dao_habitacion.obtener_cantidad_por_habitacion(id_habitacion_actual)                
                 cantidad_titular = 1 if tiene_titular else 0
@@ -81,8 +82,6 @@ class RecepcionController:
                     
                 subtotal_calculado = precio_por_noche * noches_totales
 
-                dao_reserva_habitacion = ReservaHabitacionDAO(conexion)
-
                 reserva_habitacion = ReservaHabitacion(
                     id_habitacion=id_habitacion_actual,
                     id_reserva=id_obtenido_reserva,
@@ -93,8 +92,6 @@ class RecepcionController:
                 id_generado_reserva_habitacion = dao_reserva_habitacion.insertar_reserva_habitacion(reserva_habitacion)
 
                 dao_habitacion.cambiar_estado_habitacion(id_habitacion_actual, "Ocupado")
-
-                dao_acompanante = AcompananteDAO(conexion)
 
                 for diccionario_acompanantes in acompanantes_crudos:
 
@@ -118,7 +115,7 @@ class RecepcionController:
                         id_reserva_habitacion=id_generado_reserva_habitacion
                     )
 
-                    return dao_acompanante.insertar_acompanante(acompanante)
+                    dao_acompanante.insertar_acompanante(acompanante)
 
         except Exception as e:
             raise Exception(f"Ha ocurrido un error en la base de datos: {e}")
