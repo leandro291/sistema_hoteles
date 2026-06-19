@@ -13,8 +13,8 @@ from view.servicios_view import ServiciosView
 class AppManager:
     def __init__(self, root):
         self.root = root
-        self.root.title("Sistema de gestion de hoteles")
-        self.root.geometry("1400x800")
+        self.root.title("Sistema de Gestión de Hoteles")
+        self.root.geometry(f"{1400}x{800}")
         self.root.resizable(False, False)
 
         self.usuario_actual = None
