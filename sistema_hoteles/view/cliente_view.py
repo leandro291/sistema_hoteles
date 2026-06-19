@@ -190,7 +190,7 @@ class ClienteView:
 
         try:
             controller = ClienteController()
-            controller.registrar_usuario(nombre, apellido, tipo_documento, numero_documento, 
+            controller.registrar_cliente(nombre, apellido, tipo_documento, numero_documento, 
                                         telefono, correo, direccion
                                         )
             messagebox.showinfo("Exito", "Cliente registrado correctamente en el sistema")
@@ -299,7 +299,7 @@ class ClienteView:
         # Teléfono
         tk.Label(form_frame, text="Telefono:", bg="#F3DCAB", font=("Arial", 16, "bold")).grid(row=4, column=0, sticky="w", pady=5)
         self.edit_telefono = tk.Entry(form_frame, font=("Arial", 16), bd=1, relief="solid", width=20)
-        self.edit_telefono.insert(0, (valores[5])) 
+        self.edit_telefono.insert(0, valores[5]) 
         self.edit_telefono.grid(row=4, column=1, pady=5, padx=5)
 
         # Correo

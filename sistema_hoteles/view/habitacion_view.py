@@ -215,7 +215,7 @@ class HabitacionView:
             self.ventana_tipos.destroy()
 
         except ValueError as e:
-            messagebox.showerror("Datos invalidados", str(e))
+            messagebox.showerror("Datos Inválidos", str(e))
         except Exception as e:
             messagebox.showerror("Error", str(e))
         

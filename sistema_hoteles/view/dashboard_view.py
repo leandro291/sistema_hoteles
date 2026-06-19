@@ -12,10 +12,10 @@ class DashboardView:
         self.root = root
         self.manager = manager
 
-        self.configurar_intefaz()
+        self.configurar_interfaz()
         self.actualizar_reporte_dashboard()
     
-    def configurar_intefaz(self):
+    def configurar_interfaz(self):
 
         # Contenedor Superior del sistema
         self.frame_superior = tk.Frame(self.root, background="#6B6868")

@@ -249,7 +249,7 @@ class AsignacionView:
         
         id_habitacion = self.lista_habitaciones.current()
         if id_habitacion == -1 or self.lista_habitaciones.get() == "Sin cuartos libres": 
-            messagebox.showwarning("Aviso", "Debe seleccionar una habitacion disponible.}")
+            messagebox.showwarning("Aviso", "Debe seleccionar una habitacion disponible.")
             return
         
         usuario = self.manager.usuario_actual['id_usuario']
@@ -290,7 +290,7 @@ class AsignacionView:
         except ValueError as e:
             messagebox.showerror("Datos Invalidos", str(e))
         except Exception as e:
-            messagebox.showerror(f"Error Crítico de BD", e)
+            messagebox.showerror(f"Error Crítico de BD", str(e))
 
     def limpiar_formulario(self):
         

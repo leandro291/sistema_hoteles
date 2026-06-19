@@ -121,7 +121,7 @@ class LoginView:
             self.login_usuario()
 
         except ValueError as e:
-            messagebox.showerror("Datos invalidados", str(e))
+            messagebox.showerror("Datos Inválidos", str(e))
         except Exception as e:
             messagebox.showerror("Error", str(e))
     
@@ -137,7 +137,7 @@ class LoginView:
             self.manager.mostrar_dashboard(datos)
 
         except ValueError as e:
-            messagebox.showerror("Datos invalidados", str(e))
+            messagebox.showerror("Datos Inválidos", str(e))
         except Exception as e:
             messagebox.showerror("Error", str(e))
 

@@ -317,7 +317,7 @@ class ServiciosView:
             if consumos:
                 for fila in consumos:
                     # Desempaquetamos la tupla según el orden del SELECT que hicimos en el DAO
-                    id_cargo = fila[0]
+                    id_reserva_servicio = fila[0]
                     nombre = fila[1]
                     precio = f"${float(fila[2])}"
                     cantidad = fila[3]
@@ -325,7 +325,7 @@ class ServiciosView:
                     subtotal_str = f"${subtotal_num:.2f}"
                     
                     # Insertamos la fila visualmente en la tabla blanca
-                    self.tabla_consumos.insert("", "end", values=(id_cargo, nombre, precio, cantidad, subtotal_str))
+                    self.tabla_consumos.insert("", "end", values=(id_reserva_servicio, nombre, precio, cantidad, subtotal_str))
                     
                     # Acumulamos el subtotal matemático para el gran total
                     total_extra += subtotal_num
@@ -374,11 +374,6 @@ class ServiciosView:
             messagebox.showerror("Error", str(ve))
         except Exception as e:
             messagebox.showerror("Error de BD", str(e))
-            
-        except ValueError:
-            messagebox.showerror("Error", "La cantidad debe ser un número entero válido.")
-        except Exception as e:
-            messagebox.showerror("Error de BD", str(e))
 
     def anular_cargo(self):
         seleccionado = self.tabla_consumos.selection()
@@ -387,13 +382,13 @@ class ServiciosView:
             return
         
         valores = self.tabla_consumos.item(seleccionado[0])['values']
-        id_cargo_real = valores[0]
+        id_reserva_servicio = valores[0]
         nombre_servicio = valores[1]
 
         if messagebox.askyesno("Confirmar Anulación", f"¿Está seguro de anular el cargo por '{nombre_servicio}'?"):
             try:
                 controller = ConsumoController()
-                controller.eliminar_consumo(id_cargo_real)
+                controller.eliminar_consumo(id_reserva_servicio)
                 
                 messagebox.showinfo("Éxito", "Cargo anulado correctamente.")
                 
