@@ -25,7 +25,7 @@ CREATE TABLE usuario (
 
     id_usuario SERIAL PRIMARY KEY,
     nombre_usuario VARCHAR(100) NOT NULL UNIQUE,
-    contrasena VARCHAR(255) NOT NULL, -- Evitamos usar la 'ñ'
+    contrasena VARCHAR(255) NOT NULL, 
     rol VARCHAR(50) NOT NULL
 );
 
@@ -63,8 +63,6 @@ CREATE TABLE reserva (
 
 
 
-
-
 -- 3. TABLAS CON DEPENDENCIAS DE SEGUNDO NIVEL (Tablas intermedias y Pagos)
 
 CREATE TABLE reserva_habitacion (
@@ -73,7 +71,7 @@ CREATE TABLE reserva_habitacion (
     id_habitacion INT REFERENCES habitacion(id_habitacion),
     id_reserva INT REFERENCES reserva(id_reserva),
     precio_x_noche DECIMAL(10, 2) NOT NULL,
-    es_titular BOOLEAN NOT NULL, -- Asumiendo que "Estitular" en el diagrama significa "Es titular"
+    es_titular BOOLEAN NOT NULL, 
     subtotal DECIMAL(10, 2) NOT NULL
 
 );
@@ -102,15 +100,11 @@ CREATE TABLE pago (
 
 );
 
-
-
-
-
 -- 4. TABLAS CON DEPENDENCIAS DE TERCER NIVEL
 
 CREATE TABLE acompanante (
 
-    id_acompanante SERIAL PRIMARY KEY, -- Evitamos usar la 'ñ'
+    id_acompanante SERIAL PRIMARY KEY, 
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
     tipo_documento VARCHAR(50),
