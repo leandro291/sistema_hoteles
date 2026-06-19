@@ -1,4 +1,8 @@
+import os
 import psycopg2
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class ConexionDB:
 
@@ -20,21 +24,24 @@ class ConexionDB:
     def _conectar(self):
         try:
             self._conexion = psycopg2.connect(
-                dbname='hotelesdb',
-                user='postgres',
-                password='root',
-                host='localhost',
-                port='5432'
+                dbname=os.getenv('DB_NAME'),
+                user=os.getenv('DB_USER'),
+                password=os.getenv('DB_PASSWORD'),
+                host=os.getenv('DB_HOST'),
+                port=os.getenv('DB_PORT')
             )
         except Exception as e:
-            raise ValueError(f"Ha ocurrido un error:  {e}")
+            raise ConnectionError(f"Error al conectar a la base de datos: {e}")
 
     def obtener_conexion(self):
+        if self._conexion is None or self._conexion.closed:
+            self._conectar()
         return self._conexion
     
     def cerrar_conexion(self):
         if self._conexion:
             self._conexion.close()
+            self._conexion = None
 
 if __name__ == "__main__":
     db = ConexionDB()

@@ -41,9 +41,7 @@ class ServicioDAO(BaseDAO):
                 WHERE id_servicio = %s
             """
         
-        valores = (id_servicio,)
-
-        resultado = self.obtener_un_dato_por_id(consulta, valores)
+        resultado = self.obtener_un_dato_por_id(consulta, id_servicio)
 
         if resultado:
             return float(resultado[0])

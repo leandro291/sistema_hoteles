@@ -4,7 +4,7 @@ class BaseDAO:
     def __init__(self, conexion):
         self.conexion = conexion
 
-    def insertar_datos(self, sql: str, valores: Tuple[Any][Any]) -> int:
+    def insertar_datos(self, sql: str, valores: Tuple[Any, ...]) -> int:
         cursor = self.conexion.cursor()
         try:
             cursor.execute(sql, valores)

@@ -25,12 +25,30 @@ class ReservaDAO(BaseDAO):
     def cambiar_estado_reserva(self, id_reserva: int, nuevo_estado: str) -> None:
         
         consulta = """
-            UPDATE reserva SET estado_reserva = %s WHERE id_reserva = %s
+            UPDATE 
+            reserva 
+            SET estado_reserva = %s 
+            WHERE id_reserva = %s
         """
 
         valores = (nuevo_estado, id_reserva)
 
         self.cambiar_estado(consulta, valores)
+
+    def obtener_total_reserva(self, id_reserva: int) -> float:
+
+        consulta = """
+            SELECT 
+                COALESCE((SELECT SUM(subtotal) FROM reserva_habitacion WHERE id_reserva = %s), 0.00) +
+                COALESCE((SELECT SUM(subtotal) FROM reserva_servicio WHERE id_reserva = %s), 0.00) AS total
+        """
+
+        resultado = self.obtener_un_registro(consulta, (id_reserva, id_reserva))
+
+        if not resultado:
+            raise Exception("No se ha encontrado valor para el ID ingresado")
+        
+        return float(resultado[0])
 
     def obtener_reservas_en_curso(self) -> Tuple[Any]:
 
@@ -49,29 +67,3 @@ class ReservaDAO(BaseDAO):
 
         return self.obtener_varios_datos(consulta)
     
-    def obtener_total_reserva(self, id_reserva: int) -> float:
-
-        consulta = """
-            SELECT total
-            FROM reserva
-            WHERE idreserva = %s
-        """
-
-        valores = (id_reserva,)
-
-        cursor = self.conexion.cursor()
-
-        try:
-
-            cursor.execute(consulta, valores)
-            resultado = cursor.fetchone()
-
-            if not resultado:
-                raise Exception("No se ha eonctrado valor para el ID ingresado")
-            
-            return float(resultado[0])
-
-        except Exception as e:
-            raise e
-        finally:
-            cursor.close()

@@ -41,7 +41,7 @@ class ClienteDAO(BaseDAO):
 
         return self.obtener_varios_datos(consulta)
     
-    def contar_totaL_clientes(self) -> int:
+    def contar_total_clientes(self) -> int:
 
         consulta = """
             SELECT  

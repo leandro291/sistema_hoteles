@@ -97,9 +97,7 @@ class HabitacionDAO(BaseDAO):
             WHERE h.id_habitacion = %s
         """
 
-        valores = (id_habitacion, )
-
-        resultado = self.obtener_un_dato_por_id(consulta, valores)
+        resultado = self.obtener_un_dato_por_id(consulta, id_habitacion)
         
         if resultado:
             return float(resultado[0]) 
@@ -114,15 +112,14 @@ class HabitacionDAO(BaseDAO):
             WHERE h.id_habitacion = %s
         """
 
-        valores = (id_habitacion, )
-        resultado = self.obtener_un_dato_por_id(consulta, valores)
+        resultado = self.obtener_un_dato_por_id(consulta, id_habitacion)
         
         
         if resultado:
             return int(resultado[0]) 
         return 0
     
-    def contar_totaL_habitaciones(self) -> int:
+    def contar_total_habitaciones(self) -> int:
 
         consulta = """
             SELECT  
@@ -164,9 +161,7 @@ class HabitacionDAO(BaseDAO):
             WHERE id_habitacion = %s
         """
 
-        valores = (id_habitacion, )
-
-        self.eliminar_dato_por_id(consulta, valores)
+        self.eliminar_dato_por_id(consulta, id_habitacion)
 
     def actualizar_habitacion(self, habitacion : "Habitacion") -> None:
 
