@@ -1,6 +1,6 @@
-from datetime import date
 from decimal import Decimal
 from pydantic import BaseModel
+
 
 class PagoSchema(BaseModel):
     monto: Decimal
@@ -8,9 +8,10 @@ class PagoSchema(BaseModel):
     estado_pago: str
     tipo_comprobante: str
 
+
 class Pago:
     def __init__(self, id_reserva: int, id_usuario: int, monto: Decimal, metodo_pago: str, 
-                 estado_pago: str, tipo_comprobante: str, id_pago: None = None):
+                 estado_pago: str, tipo_comprobante: str, id_pago: int | None = None):
         self.id_pago = id_pago
 
         self.monto = monto
@@ -20,3 +21,6 @@ class Pago:
 
         self.id_reserva = id_reserva
         self.id_usuario = id_usuario
+
+    def __str__(self):
+        return f"Pago(id={self.id_pago}, monto={self.monto}, metodo='{self.metodo_pago}')"
