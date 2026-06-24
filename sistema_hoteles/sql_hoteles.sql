@@ -1,3 +1,15 @@
+-- DROP DE TABLAS ANTERIORES PARA EVITAR CONFLICTOS
+DROP TABLE IF EXISTS acompanante CASCADE;
+DROP TABLE IF EXISTS pago CASCADE;
+DROP TABLE IF EXISTS reserva_servicio CASCADE;
+DROP TABLE IF EXISTS reserva_habitacion CASCADE;
+DROP TABLE IF EXISTS reserva CASCADE;
+DROP TABLE IF EXISTS habitacion CASCADE;
+DROP TABLE IF EXISTS servicio CASCADE;
+DROP TABLE IF EXISTS usuario CASCADE;
+DROP TABLE IF EXISTS cliente CASCADE;
+DROP TABLE IF EXISTS tipo_habitacion CASCADE;
+
 -- 1. TABLAS MAESTRAS (Sin dependencias externas)
 
 CREATE TABLE tipo_habitacion (
@@ -46,7 +58,7 @@ CREATE TABLE habitacion (
     num_piso INT NOT NULL,
     num_habitacion VARCHAR(20) NOT NULL,
     estado VARCHAR(50) NOT NULL,
-    id_tipo_habitacion INT REFERENCES tipo_habitacion(id_tipo_habitacion)
+    id_tipo_habitacion INT REFERENCES tipo_habitacion(id_tipo_habitacion) ON DELETE CASCADE
 
 );
 
@@ -57,8 +69,8 @@ CREATE TABLE reserva (
     fecha_entrada DATE NOT NULL,
     fecha_salida DATE NOT NULL,
     estado_reserva VARCHAR(50) NOT NULL,
-    id_cliente INT REFERENCES cliente(id_cliente),
-    id_usuario INT REFERENCES usuario(id_usuario)
+    id_cliente INT REFERENCES cliente(id_cliente) ON DELETE CASCADE,
+    id_usuario INT REFERENCES usuario(id_usuario) ON DELETE CASCADE
 );
 
 
@@ -68,8 +80,8 @@ CREATE TABLE reserva (
 CREATE TABLE reserva_habitacion (
 
     id_reserva_habitacion SERIAL PRIMARY KEY,
-    id_habitacion INT REFERENCES habitacion(id_habitacion),
-    id_reserva INT REFERENCES reserva(id_reserva),
+    id_habitacion INT REFERENCES habitacion(id_habitacion) ON DELETE CASCADE,
+    id_reserva INT REFERENCES reserva(id_reserva) ON DELETE CASCADE,
     precio_x_noche DECIMAL(10, 2) NOT NULL,
     es_titular BOOLEAN NOT NULL, 
     subtotal DECIMAL(10, 2) NOT NULL
@@ -79,8 +91,8 @@ CREATE TABLE reserva_habitacion (
 CREATE TABLE reserva_servicio (
 
     id_reserva_servicio SERIAL PRIMARY KEY,
-    id_servicio INT REFERENCES servicio(id_servicio),
-    id_reserva INT REFERENCES reserva(id_reserva),
+    id_servicio INT REFERENCES servicio(id_servicio) ON DELETE CASCADE,
+    id_reserva INT REFERENCES reserva(id_reserva) ON DELETE CASCADE,
     precio_unitario DECIMAL(10, 2) NOT NULL,
     cantidad INT NOT NULL,
     subtotal DECIMAL(10, 2) NOT NULL
@@ -95,8 +107,8 @@ CREATE TABLE pago (
     metodo_pago VARCHAR(50) NOT NULL,
     tipo_comprobante VARCHAR(50) NOT NULL,
     estado_pago VARCHAR(50) NOT NULL,
-    id_reserva INT REFERENCES reserva(id_reserva),
-    id_usuario INT REFERENCES usuario(id_usuario)
+    id_reserva INT REFERENCES reserva(id_reserva) ON DELETE CASCADE,
+    id_usuario INT REFERENCES usuario(id_usuario) ON DELETE CASCADE
 
 );
 
@@ -110,6 +122,6 @@ CREATE TABLE acompanante (
     tipo_documento VARCHAR(50),
     num_documento VARCHAR(50),
     telefono VARCHAR(20),
-    id_reserva_habitacion INT REFERENCES reserva_habitacion(id_reserva_habitacion)
+    id_reserva_habitacion INT REFERENCES reserva_habitacion(id_reserva_habitacion) ON DELETE CASCADE
 
 );
